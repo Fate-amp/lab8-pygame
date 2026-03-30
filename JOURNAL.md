@@ -73,3 +73,19 @@
 - **Hook Version**: 1.02
 - **Date**: 30-03-2026 14:30
 - **Prompt**: create another file explaining in clear steps how you created this program.
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 30-03-2026 14:31
+- **User**: fatemeh.ahmadpour@epita.fr
+- **Prompt**: "create another file explaining in clear steps how you created this program."
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Added HOW_IT_WAS_BUILT.md with simple step-by-step explanation of the design and implementation process.
+- **Context and Reasons for Changes**: User requested a separate file that clearly explains how the program was created.
+
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 30-03-2026 14:32
+- **Prompt**: Add the corresponding code lines to that report
