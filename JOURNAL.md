@@ -105,3 +105,8 @@
 - **Hook Version**: 1.02
 - **Date**: 30-03-2026 14:40
 - **Prompt**: I need to implement the speed such that the speed is gonna be less the bigger the square. But I don't know how to. Can you help me understand the idea without doing it for me
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 30-03-2026 14:42
+- **Prompt**: Q1: in self.vx and self.vy Q2: We know the size only Q3. a square with size 60 should have a speed of 1
