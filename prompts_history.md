@@ -29,3 +29,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 30-03-2026 14:42
 - **Prompt**: Q1: in self.vx and self.vy Q2: We know the size only Q3. a square with size 60 should have a speed of 1
 
+### 30-03-2026 14:45
+- **Prompt**: Q4: They both result in 60? Q5: MAX_SPPED/size?
+
