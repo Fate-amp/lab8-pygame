@@ -89,3 +89,19 @@
 - **Hook Version**: 1.02
 - **Date**: 30-03-2026 14:32
 - **Prompt**: Add the corresponding code lines to that report
+### **New Interaction**
+- **Agent Version**: 2.2
+- **Date**: 30-03-2026 14:33
+- **User**: fatemeh.ahmadpour@epita.fr
+- **Prompt**: "Add the corresponding code lines to that report"
+- **CoPilot Mode**: Agent
+- **CoPilot Model**: GPT-5.3-Codex
+- **Socratic Mode**: ON
+- **Changes Made**: Updated HOW_IT_WAS_BUILT.md by adding corresponding main.py line numbers for each development step.
+- **Context and Reasons for Changes**: User asked to map report steps to exact code locations for easier understanding.
+
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 30-03-2026 14:40
+- **Prompt**: I need to implement the speed such that the speed is gonna be less the bigger the square. But I don't know how to. Can you help me understand the idea without doing it for me

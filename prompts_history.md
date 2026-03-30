@@ -23,3 +23,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 30-03-2026 14:32
 - **Prompt**: Add the corresponding code lines to that report
 
+### 30-03-2026 14:40
+- **Prompt**: I need to implement the speed such that the speed is gonna be less the bigger the square. But I don't know how to. Can you help me understand the idea without doing it for me
+
