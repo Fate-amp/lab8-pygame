@@ -44,3 +44,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 19:34
 - **Prompt**: Update JOURNAL.md with a new entry documenting this session.   Summary of work: 1. User requested explanation of two implemented features: speed as function of size (bigger = slower) and jittering effect 2. Reviewed main.py and identified issues:    - Issue 1: Speed-size relationship breaks during movement because velocity changes apply fixed increments (Â±1 pixel/frame) scaled inversely to square size, negating the initial size-based speed formula    - Issue 2: Jittering code exists but is commented out (lines 39-40), so no visible jittering effect currently 3. User had attempted fix with scaled velocity changes: `random.choice([-1, 0, 1]) * (self.size/SQUARE_SIZE_MAX)` but disabled it 4. Explained the issues clearly to user in step-by-step breakdown 5. No code changes made yet - this was a diagnosis/explanation interaction  Timestamp: April 6, 2026 Key files affected: main.py (reviewed, not modified)
 
+### 06-04-2026 19:39
+- **Prompt**: no. go into full socratic mode and help me understand how to implement the jittering effect
+
