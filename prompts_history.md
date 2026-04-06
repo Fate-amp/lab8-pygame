@@ -77,3 +77,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 20:24
 - **Prompt**: Look at my jittering implementation and help me understand what's wrong with it
 
+### 06-04-2026 20:24
+- **Prompt**: Append a JOURNAL.md entry for this prompt.  Date: 06-04-2026 User prompt: "Look at my jittering implementation and help me understand what's wrong with it" CoPilot Mode: Agent CoPilot Model: GPT-5.3-Codex Socratic Mode: ON Changes Made: No code changes; reviewed jitter implementation in main.py and explained conceptual and behavioral issues. Context and Reasons for Changes: User requested diagnosis of jitter behavior. Analysis focused on jitter amplitude scaling with absolute position, directional bias, edge artifacts, and preserving separation between simulation and rendering.
+
