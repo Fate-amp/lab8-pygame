@@ -47,3 +47,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 19:39
 - **Prompt**: no. go into full socratic mode and help me understand how to implement the jittering effect
 
+### 06-04-2026 19:46
+- **Prompt**: 1. Moving around itself while having a general movement? 2. It uses the attributes of the current instance 3. I don't know, this is the part I'm trying to understand
+
