@@ -50,3 +50,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 19:46
 - **Prompt**: 1. Moving around itself while having a general movement? 2. It uses the attributes of the current instance 3. I don't know, this is the part I'm trying to understand
 
+### 06-04-2026 19:47
+- **Prompt**: read copilot instructions and activate the agent
+
