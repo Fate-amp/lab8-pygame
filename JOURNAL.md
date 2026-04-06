@@ -120,3 +120,8 @@
 - **Hook Version**: 1.02
 - **Date**: 30-03-2026 14:52
 - **Prompt**: I implemented the feature. Look at it and explain to me what's wrong with it
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 06-04-2026 19:27
+- **Prompt**: I tried to implement 2 things: speed as a function of size(the bigger the slower) and a jittering effect. I'm not sure if it works. Can you explain in clear steps what's wrong with my code
