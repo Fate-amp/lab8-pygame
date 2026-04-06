@@ -68,3 +68,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 20:02
 - **Prompt**: 1.With what you described, right before drawing because update changes the position 2.I think they change a little in the frame, but the actual values in update don't change? 3. Yes?  But at the end, where do I add the instructions?
 
+### 06-04-2026 20:02
+- **Prompt**: Append a new JOURNAL.md entry for this prompt.  Date: 06-04-2026 User prompt: "1.With what you described, right before drawing because update changes the position 2.I think they change a little in the frame, but the actual values in update don't change? 3. Yes? But at the end, where do I add the instructions?" Mode: Agent Model: GPT-5.3-Codex Socratic Mode: ON Changes made: No code changes; validated user understanding and provided guided placement advice for jitter logic location in rendering flow. Context/reasoning: User is asking where in main.py to place jitter instructions while preserving x/y state. Guidance should point to draw-time temporary offsets and keep update() state untouched.
+
