@@ -36,8 +36,8 @@ class Square:
 	def update(self) -> None:
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
-			self.vx += random.choice([-1, 0, 1])
-			self.vy += random.choice([-1, 0, 1])
+			# self.vx += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
+			# self.vy += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
 
 			# Keep speed inside allowed limits.
 			self.vx = max(-MAX_SPEED, min(MAX_SPEED, self.vx))
