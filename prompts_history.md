@@ -74,3 +74,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 20:12
 - **Prompt**: There are a lot of null values in the journal, Read copilot-instructions and update journal-md again, overwrite today's logs
 
+### 06-04-2026 20:24
+- **Prompt**: Look at my jittering implementation and help me understand what's wrong with it
+
