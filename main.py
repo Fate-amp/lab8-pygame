@@ -36,8 +36,8 @@ class Square:
 	def update(self) -> None:
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
-			# self.vx += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
-			# self.vy += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
+			self.vx += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
+			self.vy += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
 
 			# Keep speed inside allowed limits.
 			self.vx = max(-MAX_SPEED, min(MAX_SPEED, self.vx))
@@ -70,7 +70,9 @@ class Square:
 			self.vy *= -1
 
 	def draw(self, surface: pygame.Surface) -> None:
-		pygame.draw.rect(surface, self.color, (self.x, self.y, self.size, self.size))
+		x=self.x+(random.choice([1,-1])*(self.size/SQUARE_SIZE_MAX*1))
+		y=self.y+(random.choice([1,-1])*(self.size/SQUARE_SIZE_MAX*1))
+		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
 
 
 def main() -> None:
