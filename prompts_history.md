@@ -59,3 +59,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 19:53
 - **Prompt**: There are a lot of null values in the journal, update it with today's prompts again
 
+### 06-04-2026 19:57
+- **Prompt**: About the jittering effect, I don't get how to do it without changing the current x and y values
+
