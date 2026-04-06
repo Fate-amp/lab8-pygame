@@ -125,3 +125,8 @@
 - **Hook Version**: 1.02
 - **Date**: 06-04-2026 19:27
 - **Prompt**: I tried to implement 2 things: speed as a function of size(the bigger the slower) and a jittering effect. I'm not sure if it works. Can you explain in clear steps what's wrong with my code
+
+### **New Interaction**
+- **Hook Version**: 1.02
+- **Date**: 06-04-2026 19:34
+- **Prompt**: update journal based on copilot instructions
