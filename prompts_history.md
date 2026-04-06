@@ -62,3 +62,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 06-04-2026 19:57
 - **Prompt**: About the jittering effect, I don't get how to do it without changing the current x and y values
 
+### 06-04-2026 19:57
+- **Prompt**: Append a new JOURNAL.md entry for this prompt.  Date: 06-04-2026 User prompt: "About the jittering effect, I don't get how to do it without changing the current x and y values" Mode: Agent Model: GPT-5.3-Codex Socratic Mode: ON Changes made: No code changes; provided conceptual Socratic guidance for implementing jitter at draw-time using temporary offsets instead of mutating state. Context/reasoning: User asked how to create jitter while preserving true physics position. Guidance focused on separating simulation state (x,y) from rendering position (draw_x, draw_y).
+
