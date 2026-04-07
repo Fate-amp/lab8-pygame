@@ -95,3 +95,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 07-04-2026 11:22
 - **Prompt**: I don't know, explain
 
+### 07-04-2026 11:25
+- **Prompt**: Now I want to make the small squares flee away from the bigger ones. I need you to help me understand the idea and how to implement it because it does not seem intuitive to me
+
