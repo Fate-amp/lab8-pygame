@@ -98,3 +98,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 07-04-2026 11:25
 - **Prompt**: Now I want to make the small squares flee away from the bigger ones. I need you to help me understand the idea and how to implement it because it does not seem intuitive to me
 
+### 07-04-2026 11:28
+- **Prompt**: 1. I would need to check if another square's position is in the x-self.size of the current one? But I don't know how to implement that. Right now, Every square is updating independantly 2. I should flip the square's speed by multiplying it by -1  But I don't know where to implement that in the life cycle of the app
+
