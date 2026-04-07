@@ -86,3 +86,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 07-04-2026 11:03
 - **Prompt**: Update JOURNAL.md in the repository root for the latest user prompt: "activate journal-logger agent based on copilot-instructions".  Requirements to follow strictly: - Append a new entry at the end of JOURNAL.md (chronological order, oldest first). - Use the required template from .github/agents/journal-logger.agent.md. - Include a timestamp using current date context: 2026-04-07 (include time if template expects it). - Summarize that this prompt requested activation of the journal-logger agent and that the logger workflow was invoked. - Keep formatting consistent with existing JOURNAL.md entries. - If no code files were changed besides journaling, explicitly note "no code changes" if template supports such a field.  Perform the edit directly in the workspace and report completion with a short summary of what was appended.
 
+### 07-04-2026 11:20
+- **Prompt**: what does FPS=0 mean in simple terms
+
