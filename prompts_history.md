@@ -104,3 +104,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 07-04-2026 11:35
 - **Prompt**: 1. I should compare the sizes of the two squares 2. compare the x values and the y values 3. If square.size<othersquare.size and square.x<othersquare.x-othersquare.size: square.v*=-1?
 
+### 07-04-2026 11:51
+- **Prompt**: should I create a vector for the distance between the centers and flip that vector for the new velocity vector?
+
