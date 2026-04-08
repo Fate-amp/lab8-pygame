@@ -9,7 +9,7 @@ import pygame
 WIDTH = 800
 HEIGHT = 600
 FPS = 60
-SQUARE_COUNT = 100
+SQUARE_COUNT = 30
 SQUARE_SIZE = 30
 SQUARE_SIZE_MAX=60
 SQUARE_SIZE_MIN=10
@@ -79,7 +79,7 @@ class Square:
 			square_center=pygame.Vector2((self.x)+(self.size/2),(self.y)+(self.size/2))
 			distance_vector=square_center-threat_center
 			distance_vector_norm=distance_vector.magnitude()
-			if 0<distance_vector_norm<60:
+			if 0<distance_vector_norm<60 and self.size<threat.size:
 				speed=pygame.Vector2(self.vx,self.vy).magnitude()
 				self.vx=speed*(distance_vector.normalize().x)
 				self.vy=speed*(distance_vector.normalize().y)
