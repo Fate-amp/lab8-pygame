@@ -119,3 +119,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 08-04-2026 14:08
 - **Prompt**: How do I take the direction of the distance vector but not its magnitude?
 
+### 08-04-2026 14:16
+- **Prompt**: Look at my implementation and help me figure out what's wrong in clear steps
+
