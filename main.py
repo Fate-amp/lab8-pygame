@@ -69,15 +69,17 @@ class Square:
 			self.y = HEIGHT - self.size
 			self.vy *= -1
 		
-		# Trying to implement the fleeing feature
+		# the fleeing feature
 		for threat in squares:
+			# I implemented the following to prevent the error of a 0 distance vector
+			# from happening
 			if threat is self:
 				continue
 			threat_center=pygame.Vector2((threat.x)+(threat.size/2),(threat.y)+(threat.size/2))
 			square_center=pygame.Vector2((self.x)+(self.size/2),(self.y)+(self.size/2))
 			distance_vector=square_center-threat_center
 			distance_vector_norm=distance_vector.magnitude()
-			if 0<distance_vector_norm<10:
+			if 0<distance_vector_norm<60:
 				speed=pygame.Vector2(self.vx,self.vy).magnitude()
 				self.vx=speed*(distance_vector.normalize().x)
 				self.vy=speed*(distance_vector.normalize().y)
