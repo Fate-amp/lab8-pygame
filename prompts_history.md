@@ -146,3 +146,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 08-04-2026 22:18
 - **Prompt**: Append a new entry to JOURNAL.md for the latest prompt on 2026-04-08.  User prompt summary: - Asked when distance vector magnitude becomes 0 (same-center case), how that can happen, and how to prevent it. - Stated intended fix: check magnitude is not 0 before normalization.  Requirements: - Append at end, chronological order. - Use .github/agents/journal-logger.agent.md template. - Keep formatting consistent with existing entries. - Include mode/model/socratic metadata. - Note this step is explanatory/debug guidance; no code changes made in this logging step.
 
+### 08-04-2026 22:21
+- **Prompt**: The code runs but the fleeing is not visible. Help me understand what I'm doing wrong
+
