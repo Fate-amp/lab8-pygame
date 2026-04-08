@@ -12,7 +12,7 @@ FPS = 60
 SQUARE_COUNT = 100
 SQUARE_SIZE = 30
 SQUARE_SIZE_MAX=60
-SQUARE_SIZE_MIN=30
+SQUARE_SIZE_MIN=10
 MAX_SPEED = 15
 VELOCITY_CHANGE_CHANCE = 0.03
 
@@ -33,7 +33,7 @@ class Square:
 			random.randint(50, 255),
 		)
 
-	def update(self) -> None:
+	def update(self,squares) -> None:
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
 			self.vx += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
@@ -68,6 +68,19 @@ class Square:
 		elif self.y + self.size > HEIGHT:
 			self.y = HEIGHT - self.size
 			self.vy *= -1
+		
+		# Trying to implement the fleeing feature
+		for threat in squares:
+			if threat is self:
+				continue
+			threat_center=pygame.Vector2((threat.x)+(threat.size/2),(threat.y)+(threat.size/2))
+			square_center=pygame.Vector2((self.x)+(self.size/2),(self.y)+(self.size/2))
+			distance_vector=square_center-threat_center
+			distance_vector_norm=distance_vector.magnitude()
+			if 0<distance_vector_norm<10:
+				speed=pygame.Vector2(self.vx,self.vy).magnitude()
+				self.vx=speed*(distance_vector.normalize().x)
+				self.vy=speed*(distance_vector.normalize().y)
 
 	def draw(self, surface: pygame.Surface) -> None:
 		x=self.x+(random.choice([1,-1])*(self.size/SQUARE_SIZE_MAX*1))
@@ -95,7 +108,7 @@ def main() -> None:
 				running = False
 
 		for square in squares:
-			square.update()
+			square.update(squares)
 
 		screen.fill((18, 18, 24))
 		for square in squares:
