@@ -140,3 +140,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 08-04-2026 22:13
 - **Prompt**: Append a new entry to JOURNAL.md at the repo root summarizing today's interactions (2026-04-08) before any further work.  Must follow repo copilot instructions: - Append at the end in chronological order. - Use the template required by .github/agents/journal-logger.agent.md. - Keep formatting consistent with existing entries.  Content to capture in concise form: - User requested journal logger activation first and it was executed. - Discussion/teaching on FPS=0 meaning no frame cap. - Guided implementation discussion for small squares fleeing larger ones using vectors. - Debugging sequence: Vector2 .norm() method error, correction toward proper magnitude/length usage, then zero-length normalization error. - User requested journal update before proceeding. - Indicate no committed code changes were made in this specific logging step.  Include current timestamp for 2026-04-08 context and standard metadata fields (mode/model/socratic state).
 
+### 08-04-2026 22:18
+- **Prompt**: Now the questions: 1. When they have the same center, the distance would be 0, but in what case would that happen? and how do i prevent it Question 3: I should check whether the magnitude of the vector  is not 0
+
