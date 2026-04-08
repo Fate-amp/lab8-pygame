@@ -131,3 +131,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 08-04-2026 22:09
 - **Prompt**: norm is supposed to return the length of the vector, but it should be something else like length?
 
+### 08-04-2026 22:12
+- **Prompt**: now this: Can't normalize Vector of length zero
+
