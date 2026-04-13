@@ -185,3 +185,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 13-04-2026 14:49
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "I need to implement a feature where the squares have random life spans and die at the end and new squares are created. Help me understand what is required here so I get some ideas on how to implement it". Timestamp 13-04-2026. Note that no code changes were made; provided conceptual guidance on requirements and implementation ideas for lifespan/respawn behavior. Keep existing template and chronological order.
 
+### 13-04-2026 21:43
+- **Prompt**: Okay here's what I've gathered from what you said. Correct me if I'm wrong. I should create a MIN_LIFESPAN and MAX_LIFESPAN in the constants and for every square, I add a lifespan attribute randomly. I also add a remaining_life attribute which is updated with every update and if it's 0, the square is removed. What I don't understand is:1. How do I cleanly remove a square when it's dead? 2. To catch the remaining_life, do I use the substraction time stamps? Or is there a better way that I'm not seeing?
+
