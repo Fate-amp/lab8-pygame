@@ -167,3 +167,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 13-04-2026 14:15
 - **Prompt**: generate the code explorer site for this project
 
+### 13-04-2026 14:15
+- **Prompt**: Create a code explorer learning dashboard site for the workspace at c:\Users\Admin\Documents\GitHub\lab8-pygame. Analyze the Python source (especially main.py) and repository docs where useful, then generate a single self-contained HTML file in the repo root named code-explorer.html. Include architecture overview, key function/class walkthrough, control/data flow explanation, Mermaid diagrams, complexity/performance notes, and curated links to important files. Make it readable on desktop and mobile. Do the implementation directly in the workspace (write the HTML file).
+
