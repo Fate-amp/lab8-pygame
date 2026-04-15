@@ -209,3 +209,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 15-04-2026 16:54
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "so here's my guess: I update each square, then create a survivors list, then for every square that's dead, I create a new one using the class. Explain to me if anything is wrong in this logic" with timestamp 15-04-2026. Note that no code changes were made; provide conceptual guidance on the update/survivor/replacement flow. Preserve existing template and chronological order.
 
+### 15-04-2026 17:05
+- **Prompt**: How do I capture the birthtime? pyhton date does not seem right for this
+
