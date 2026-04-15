@@ -215,3 +215,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 15-04-2026 17:05
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "How do I capture the birthtime? pyhton date does not seem right for this" with timestamp 15-04-2026. Note that no code changes were made; provide conceptual guidance on using a monotonic clock or pygame tick count for spawn/birth time. Preserve existing template and chronological order.
 
+### 15-04-2026 17:18
+- **Prompt**: I implemented what I had in mind. Now I need you to go through my code and tell me where it breaks.
+
