@@ -200,3 +200,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 15-04-2026 12:17
 - **Prompt**: so should I add the survivors before draw? So that the update function updates the remaining_life and the draw only draws the one that have life remaining? Or should I create the survivors while going through squares in update?
 
+### 15-04-2026 12:18
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "so should I add the survivors before draw? So that the update function updates the remaining_life and the draw only draws the one that have life remaining? Or should I create the survivors while going through squares in update?" with timestamp 15-04-2026. Note no code changes; provided Socratic guidance on survivors-list timing and separation of update/filter/draw responsibilities. Preserve existing template and chronological order.
+
