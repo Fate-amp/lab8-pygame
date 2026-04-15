@@ -230,3 +230,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 15-04-2026 17:36
 - **Prompt**: They are moving across the screen really fast, then they slow down suddenly. I don't understand what's wrong with the remaining_life logic. Can you make it clear?
 
+### 15-04-2026 17:36
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "They are moving across the screen really fast, then they slow down suddenly. I don't understand what's wrong with the remaining_life logic. Can you make it clear?" with timestamp 15-04-2026. Note no code changes; user requests clarification on remaining_life calculation logic and symptom of erratic speed behavior. Preserve existing template and chronological order.
+
