@@ -299,3 +299,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 16:48
 - **Prompt**: Does this problem still persist? If yes, how can I improve it? New pygame.Vector2 objects are created repeatedly in the inner loop, adding allocation churn per frame.
 
+### 16-04-2026 16:48
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "Does this problem still persist? If yes, how can I improve it? New pygame.Vector2 objects are created repeatedly in the inner loop, adding allocation churn per frame." with timestamp 16-04-2026. Note no code changes; user asked about Vector2 allocation churn in the flee loop and requested optimization guidance. Preserve existing template and chronological order.
+
