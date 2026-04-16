@@ -266,3 +266,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 15:57
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "I know that the time complexity is n^2. I think I should only care about the nearby squares, but how do I see the nearby squares without comparing everything? Do I compare the x and y values and if they're less than a certain amount, I start going through the square? Help me understand how I can prevent that from happening" with timestamp 16-04-2026. Note no code changes; provided Socratic guidance on spatial partitioning / nearby-neighbor filtering to avoid all-pairs comparisons. Preserve existing template and chronological order.
 
+### 16-04-2026 16:02
+- **Prompt**: I need you to give me hints and guiding questions as well as just socratic questions. I need more insight
+
