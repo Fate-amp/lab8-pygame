@@ -296,3 +296,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 16:42
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "rewrite the fleeing feature, add type hints and document it for me" with timestamp 16-04-2026. Summarize that the fleeing feature was reimplemented using spatial grid partitioning to reduce O(n^2) complexity, with type hints and documentation added. Preserve existing template and chronological order.
 
+### 16-04-2026 16:48
+- **Prompt**: Does this problem still persist? If yes, how can I improve it? New pygame.Vector2 objects are created repeatedly in the inner loop, adding allocation churn per frame.
+
