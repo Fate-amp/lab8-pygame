@@ -284,3 +284,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 16:26
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "Would the idea work though, with the cell size? My squares have different cell sizes so wouldn't that mess up the grid?" with timestamp 16-04-2026. Note no code changes; user asked a valid design question about grid partitioning with variable square sizes. Provided explanation distinguishing between square position/size and grid cell assignment. Preserve existing template and chronological order.
 
+### 16-04-2026 16:32
+- **Prompt**: Make that intuitive, I don't understand what you're suggesting. Explain in simple terms and using examples
+
