@@ -115,17 +115,25 @@ class Square:
 					if threat is self:
 						continue
 					
-					# Calculate distance to threat.
+					# Calculate displacement vector from self center to threat center.
 					dx: float = (threat.x + threat.size / 2) - (self.x + self.size / 2)
 					dy: float = (threat.y + threat.size / 2) - (self.y + self.size / 2)
-					distance: float = (dx*dx+dy*dy)**0.5
+					distance: float = (dx * dx + dy * dy) ** 0.5
 					
 					# Flee if threat is larger and within flee radius.
 					if 0 < distance < FLEE_RADIUS and self.size < threat.size:
-						speed: float = (self.vx*self.vx+self.vy*self.vy)**0.5
-						norm_factor:float= speed/distance
-						self.vx = -norm_factor*dx
-						self.vy = -norm_factor*dy
+						# Separate direction and speed for stable, predictable fleeing.
+						
+						# 1. Calculate current speed (magnitude of velocity vector).
+						current_speed: float = (self.vx * self.vx + self.vy * self.vy) ** 0.5
+						
+						# 2. Normalize flee direction (unit vector pointing away from threat).
+						flee_dir_x: float = -dx / distance  # Negative dx/distance points away
+						flee_dir_y: float = -dy / distance
+						
+						# 3. Apply speed to normalized direction for stable fleeing velocity.
+						self.vx = current_speed * flee_dir_x
+						self.vy = current_speed * flee_dir_y
 		
 		# To update the remaining_life
 		current_time: float = pygame.time.get_ticks() / 1000

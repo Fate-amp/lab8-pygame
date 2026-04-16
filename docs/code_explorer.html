@@ -542,7 +542,7 @@ function selectReview(id) {
       </div>
       <div class="detail-body">${body}</div>
       <pre class="snippet">${escH(item.snippet)}</pre>
-      <div class="hint-box">&#128161; <strong>Improvement:</strong> ${escH(item.improvementHint)}</div>
+      <div class="hint-box">💡 <strong>Improvement:</strong> ${escH(item.improvementHint)}</div>
     </div>`;
 }
 
@@ -682,14 +682,14 @@ async function renderDiagram(key, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
   const source = diagrams[key];
-  if (!source) { container.innerHTML = '<p style="color:var(--muted)">No diagram source found.</p>'; return; }
+  if (!source) { container.innerHTML = '<p style="color:var(--muted)">No diagram found.</p>'; return; }
   const uid = 'mmd-' + key + '-' + (++renderCounter);
   try {
     const { svg, bindFunctions } = await mermaid.render(uid, source);
     container.innerHTML = svg;
     if (typeof bindFunctions === 'function') bindFunctions(container);
   } catch (err) {
-    container.innerHTML = '<pre class="fallback">Render failed: ' + err.message + '\n\nSource:\n' + source + '</pre>';
+    container.innerHTML = '<pre class="fallback">Render error: ' + err.message + '\n\nSource:\n' + source + '</pre>';
   }
 }
 

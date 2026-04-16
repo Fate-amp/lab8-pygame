@@ -21,3 +21,5 @@ I am trying to go through the improvements mentioned in the code-explorer.html:
 
 1. **The nested threat loop**
 Idea: Using grids and grid comparison instead of comparing every square to every other square
+2. **Allocating Vector object 5 times** in the inner loop:
+Idea to fix: The pygame.Vector2 is easy to use, but it can easily be replaced with maths operations without creating new objects
