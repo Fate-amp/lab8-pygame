@@ -325,3 +325,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 16-04-2026 17:31
 - **Prompt**: Can you explain why the flee speed calculation is incorrect?
 
+### 16-04-2026 17:32
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "Can you explain why the flee speed calculation is incorrect?" with timestamp 16-04-2026. Note no code changes; provided detailed explanation of why mixing distance and speed in norm_factor calculation creates unstable steering. Preserve existing template and chronological order.
+
