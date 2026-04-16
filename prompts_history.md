@@ -311,3 +311,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 ### 16-04-2026 17:07
 - **Prompt**: I fixed those bugs but the squares are now overlapping ALOT. Something is still off
 
+### 16-04-2026 17:08
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "I fixed those bugs but the squares are now overlapping ALOT. Something is still off" with timestamp 16-04-2026. Note that a logic bug was identified: the flee direction was backwards, causing squares to move toward threats instead of away. Preserve existing template and chronological order. No code changes.
+
