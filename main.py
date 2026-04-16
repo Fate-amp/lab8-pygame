@@ -1,5 +1,8 @@
+"""Simple pygame animation of wandering squares that flee larger neighbors."""
+
 import random
 import sys
+from typing import Sequence
 
 import pygame
 
@@ -15,29 +18,40 @@ SQUARE_SIZE_MAX=60
 SQUARE_SIZE_MIN=10
 MAX_SPEED = 15
 VELOCITY_CHANGE_CHANCE = 0.03
+Color = tuple[int, int, int]
 
+# Lifespan settings in seconds.
+MIN_LIFESPAN=5
+MAX_LIFESPAN=20
+ROUNDOFF=0.1
 
 class Square:
 	"""Represents one moving square on the screen."""
 
 	def __init__(self) -> None:
+		"""Initialize randomized motion, color, and lifespan metadata."""
 		# Start at a random position with a random speed and color.
-		self.size = random.randint(SQUARE_SIZE_MIN,SQUARE_SIZE_MAX)
-		self.x = random.randint(0, WIDTH - self.size)
-		self.y = random.randint(0, HEIGHT - self.size)
-		self.vx = MAX_SPEED/self.size
-		self.vy = self.vx
-		self.color = (
+		self.size: int = random.randint(SQUARE_SIZE_MIN, SQUARE_SIZE_MAX)
+		self.x: float = random.randint(0, WIDTH - self.size)
+		self.y: float = random.randint(0, HEIGHT - self.size)
+		self.vx: float = MAX_SPEED / self.size
+		self.vy: float = self.vx
+		self.color: Color = (
 			random.randint(50, 255),
 			random.randint(50, 255),
 			random.randint(50, 255),
 		)
+		self.lifespan: int = random.randint(MIN_LIFESPAN, MAX_LIFESPAN)
+		self.birth_time: float = pygame.time.get_ticks() / 1000
+		self.remaining_life: float = float(self.lifespan)
+		self.alive: bool = True
 
-	def update(self,squares) -> None:
+	def update(self, squares: Sequence["Square"]) -> None:
+		"""Advance movement, bounce at edges, flee threats, and age the square."""
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
-			self.vx += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
-			self.vy += random.choice([-1, 0, 1])*(self.size/SQUARE_SIZE_MAX)
+			self.vx += random.choice([-1, 0, 1]) * (self.size / SQUARE_SIZE_MAX)
+			self.vy += random.choice([-1, 0, 1]) * (self.size / SQUARE_SIZE_MAX)
 
 			# Keep speed inside allowed limits.
 			self.vx = max(-MAX_SPEED, min(MAX_SPEED, self.vx))
@@ -75,18 +89,26 @@ class Square:
 			# from happening
 			if threat is self:
 				continue
-			threat_center=pygame.Vector2((threat.x)+(threat.size/2),(threat.y)+(threat.size/2))
-			square_center=pygame.Vector2((self.x)+(self.size/2),(self.y)+(self.size/2))
-			distance_vector=square_center-threat_center
-			distance_vector_norm=distance_vector.magnitude()
-			if 0<distance_vector_norm<60 and self.size<threat.size:
-				speed=pygame.Vector2(self.vx,self.vy).magnitude()
-				self.vx=speed*(distance_vector.normalize().x)
-				self.vy=speed*(distance_vector.normalize().y)
+			threat_center = pygame.Vector2(threat.x + (threat.size / 2), threat.y + (threat.size / 2))
+			square_center = pygame.Vector2(self.x + (self.size / 2), self.y + (self.size / 2))
+			distance_vector = square_center - threat_center
+			distance_vector_norm = distance_vector.magnitude()
+			if 0 < distance_vector_norm < 60 and self.size < threat.size:
+				speed = pygame.Vector2(self.vx, self.vy).magnitude()
+				self.vx = speed * (distance_vector.normalize().x)
+				self.vy = speed * (distance_vector.normalize().y)
+		
+		# To update the remaining_life
+		current_time: float = pygame.time.get_ticks() / 1000
+		self.remaining_life = self.lifespan - (current_time - self.birth_time)
+		if self.remaining_life < ROUNDOFF:
+			self.alive = False
+
 
 	def draw(self, surface: pygame.Surface) -> None:
-		x=self.x+(random.choice([1,-1])*(self.size/SQUARE_SIZE_MAX*1))
-		y=self.y+(random.choice([1,-1])*(self.size/SQUARE_SIZE_MAX*1))
+		"""Draw the square with a slight jitter for a hand-drawn effect."""
+		x = self.x + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
+		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
 
 
@@ -100,10 +122,10 @@ def main() -> None:
 	clock = pygame.time.Clock()
 
 	# 2) Create 10 square objects.
-	squares = [Square() for _ in range(SQUARE_COUNT)]
+	squares: list[Square] = [Square() for _ in range(SQUARE_COUNT)]
 
 	# 3) Main loop: handle events, update state, draw frame.
-	running = True
+	running: bool = True
 	while running:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -111,7 +133,8 @@ def main() -> None:
 
 		for square in squares:
 			square.update(squares)
-
+			
+		squares=[square if square.alive else Square() for square in squares]
 		screen.fill((18, 18, 24))
 		for square in squares:
 			square.draw(screen)

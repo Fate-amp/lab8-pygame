@@ -148,7 +148,16 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 <div class="tab-panel active" id="tab-architecture">
   <div class="card">
     <h3>Architecture Overview</h3>
-    <p style="color:var(--muted);font-size:0.87rem;">The program follows a classic game-loop architecture: initialize once, then repeatedly process input, update state, and render output at a capped frame rate.</p>
+    <p style="color:var(--muted);font-size:0.87rem;">The program follows a classic game loop architecture: initialize once, then repeatedly process input, update state, and render output at a capped frame rate.</p>
+    <div style="margin-top:1rem;background:var(--surface2);border:1px solid #3a3a55;border-radius:8px;padding:0.9rem 1rem;">
+      <div style="font-weight:700;color:var(--accent);font-size:0.9rem;margin-bottom:0.35rem;">Key Function Class Walkthrough</div>
+      <ul style="padding-left:1rem;color:var(--muted);font-size:0.84rem;line-height:1.55;">
+        <li><strong>Square.__init__</strong> seeds per object state: size, spawn point, velocity, color, and lifespan timers.</li>
+        <li><strong>Square.update</strong> applies random drift, boundary bounce, flee steering, and life countdown.</li>
+        <li><strong>Square.draw</strong> renders each square with tiny jitter for a sketch style motion feel.</li>
+        <li><strong>main</strong> orchestrates startup, frame loop phases, replacement of expired squares, and shutdown.</li>
+      </ul>
+    </div>
     <div class="arch-subnav" style="margin-top:1rem;">
       <button class="arch-btn active" onclick="switchArch('call', this)">Call Graph</button>
       <button class="arch-btn" onclick="switchArch('deps', this)">Dependencies</button>
@@ -286,23 +295,24 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 
 <div class="tab-panel" id="tab-typehints">
   <div class="type-banner">
-    <div class="score-big">2/5</div>
-    <div class="score-verdict">Type hint coverage is partial: method signatures are started well, but key parameters and shared collections still use implicit typing.</div>
+    <div class="score-big">4/5</div>
+    <div class="score-verdict">Type hints are strong for a beginner game project: key signatures, aliases, and container types are present, with minor consistency gaps in constant declarations.</div>
   </div>
 
   <div class="two-col">
     <div class="card">
       <h3>Strengths</h3>
       <ul style="padding-left:1.1rem;color:var(--muted);font-size:0.86rem;">
-        <li>Return annotations are present in __init__, update, draw, and main.</li>
-        <li>The draw method explicitly declares pygame.Surface for its parameter.</li>
+        <li>Parameter annotations exist where they matter most, including Sequence[Square] and pygame.Surface.</li>
+        <li>Return annotations are consistent across __init__, update, draw, and main.</li>
+        <li>Concrete generics and aliases are used: list[Square], tuple[int, int, int], and Color.</li>
       </ul>
     </div>
     <div class="card">
       <h3>Gaps</h3>
       <ul style="padding-left:1.1rem;color:var(--muted);font-size:0.86rem;">
-        <li>The update parameter squares has no container hint like list[Square].</li>
-        <li>Core fields x, y, vx, vy are dynamically created without explicit attribute typing.</li>
+        <li>Top level constants are not fully annotated, so static tools infer their types indirectly.</li>
+        <li>A small typed config object for gameplay constants would improve consistency across modules.</li>
       </ul>
     </div>
   </div>
@@ -376,37 +386,53 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
   <div class="ns-item">
     <div class="ns-num">1</div>
     <div class="ns-text">
-      <a href="./main.py" target="_blank" rel="noreferrer">Read main.py line by line</a>
-      <div class="ns-desc">Primary runtime source to map constants, Square methods, and loop phases.</div>
+      <a data-repo-link="main.py" href="#" target="_blank" rel="noreferrer">Read main.py line by line</a>
+      <div class="ns-desc">Primary runtime source for constants, Square behavior, control flow, and rendering output.</div>
     </div>
   </div>
 
   <div class="ns-item">
     <div class="ns-num">2</div>
     <div class="ns-text">
-      <a href="./HOW_IT_WAS_BUILT.md" target="_blank" rel="noreferrer">Compare with build narrative</a>
-      <div class="ns-desc">Confirms implementation intent and learning progression from setup to loop logic.</div>
+      <a data-repo-link="README.md" href="#" target="_blank" rel="noreferrer">Start with README goals</a>
+      <div class="ns-desc">Project scope, setup instructions, and expected behavior before reading implementation details.</div>
     </div>
   </div>
 
   <div class="ns-item">
     <div class="ns-num">3</div>
     <div class="ns-text">
-      <a href="https://docs.python.org/3/library/random.html" target="_blank" rel="noreferrer">Python random module docs</a>
-      <div class="ns-desc">Useful for understanding randomness primitives used in position, colors, and velocity perturbation.</div>
+      <a data-repo-link="HOW_IT_WAS_BUILT.md" href="#" target="_blank" rel="noreferrer">Compare with build narrative</a>
+      <div class="ns-desc">Walk through implementation decisions and trace where design intent appears in code.</div>
     </div>
   </div>
 
   <div class="ns-item">
     <div class="ns-num">4</div>
     <div class="ns-text">
-      <a href="https://www.pygame.org/docs/ref/math.html" target="_blank" rel="noreferrer">Pygame vector math docs</a>
-      <div class="ns-desc">Explains Vector2 normalize and magnitude behavior used in flee steering.</div>
+      <a data-repo-link="REPORT.md" href="#" target="_blank" rel="noreferrer">Inspect REPORT findings</a>
+      <div class="ns-desc">Cross check correctness and performance observations against the current implementation.</div>
     </div>
   </div>
 
   <div class="ns-item">
     <div class="ns-num">5</div>
+    <div class="ns-text">
+      <a data-repo-link="JOURNAL.md" href="#" target="_blank" rel="noreferrer">Trace evolution in JOURNAL</a>
+      <div class="ns-desc">See historical changes and rationale to understand why architecture choices were made.</div>
+    </div>
+  </div>
+
+  <div class="ns-item">
+    <div class="ns-num">6</div>
+    <div class="ns-text">
+      <a href="https://www.pygame.org/docs/ref/math.html" target="_blank" rel="noreferrer">Pygame vector math docs</a>
+      <div class="ns-desc">Reference for Vector2 normalize and magnitude, which drive flee behavior and motion vectors.</div>
+    </div>
+  </div>
+
+  <div class="ns-item">
+    <div class="ns-num">7</div>
     <div class="ns-text">
       <a href="https://en.wikipedia.org/wiki/Time_complexity" target="_blank" rel="noreferrer">Time complexity primer</a>
       <div class="ns-desc">Supports reasoning about why pairwise neighbor checks become expensive as object count grows.</div>
@@ -636,8 +662,20 @@ async function renderAll() {
   }
 }
 
+function resolveRepoLinks() {
+  const inDocs = /\/docs\//i.test(window.location.pathname.replace(/\\/g, '/'));
+  const prefix = inDocs ? '../' : './';
+  document.querySelectorAll('[data-repo-link]').forEach((el) => {
+    const target = el.getAttribute('data-repo-link');
+    if (target) {
+      el.setAttribute('href', prefix + target);
+    }
+  });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   selectReview(0);
+  resolveRepoLinks();
   renderAll();
 });
 </script>
