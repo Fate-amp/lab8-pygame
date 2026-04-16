@@ -20,10 +20,11 @@ MAX_SPEED = 15
 VELOCITY_CHANGE_CHANCE = 0.03
 Color = tuple[int, int, int]
 
-# Lifespan settings in seconds.
-MIN_LIFESPAN=5
-MAX_LIFESPAN=20
-ROUNDOFF=0.1
+MIN_LIFESPAN:int=5
+MAX_LIFESPAN:int=20
+ROUNDOFF:float=0.1
+CELL_SIZE: int = 100 
+FLEE_RADIUS: float = 60 
 
 class Square:
 	"""Represents one moving square on the screen."""
@@ -83,20 +84,48 @@ class Square:
 			self.y = HEIGHT - self.size
 			self.vy *= -1
 		
-		# the fleeing feature
-		for threat in squares:
-			# I implemented the following to prevent the error of a 0 distance vector
-			# from happening
-			if threat is self:
-				continue
-			threat_center = pygame.Vector2(threat.x + (threat.size / 2), threat.y + (threat.size / 2))
-			square_center = pygame.Vector2(self.x + (self.size / 2), self.y + (self.size / 2))
-			distance_vector = square_center - threat_center
-			distance_vector_norm = distance_vector.magnitude()
-			if 0 < distance_vector_norm < 60 and self.size < threat.size:
-				speed = pygame.Vector2(self.vx, self.vy).magnitude()
-				self.vx = speed * (distance_vector.normalize().x)
-				self.vy = speed * (distance_vector.normalize().y)
+		# Flee from nearby larger threats using spatial grid partitioning (O(k) vs O(n²)).		
+		# Build spatial grid: map cell coordinates to list of squares in that cell.
+		grid: dict[tuple[int, int], list[Square]] = {}
+		for square in squares:
+			# Determine which grid cells this square occupies (handles variable sizes).
+			cell_x_min: int = int(square.x // CELL_SIZE)
+			cell_x_max: int = int((square.x + square.size) // CELL_SIZE)
+			cell_y_min: int = int(square.y // CELL_SIZE)
+			cell_y_max: int = int((square.y + square.size) // CELL_SIZE)
+
+			# Store square in all cells it occupies for neighbor discovery.
+			for cx in range(cell_x_min, cell_x_max + 1):
+				for cy in range(cell_y_min, cell_y_max + 1):
+					if (cx, cy) not in grid:
+						grid[(cx, cy)] = []
+					grid[(cx, cy)].append(square)
+		
+		# Query neighboring grid cells (3×3 neighborhood) for threats.
+		my_cell_x: int = int(self.x // CELL_SIZE)
+		my_cell_y: int = int(self.y // CELL_SIZE)
+		
+		for cx in range(my_cell_x - 1, my_cell_x + 2):
+			for cy in range(my_cell_y - 1, my_cell_y + 2):
+				if (cx, cy) not in grid:
+					continue
+				
+				for threat in grid[(cx, cy)]:
+					# Skip self-comparison.
+					if threat is self:
+						continue
+					
+					# Calculate distance to threat.
+					dx: float = (threat.x + threat.size / 2) - (self.x + self.size / 2)
+					dy: float = (threat.y + threat.size / 2) - (self.y + self.size / 2)
+					distance: float = (dx*dx+dy*dy)**0.5
+					
+					# Flee if threat is larger and within flee radius.
+					if 0 < distance < FLEE_RADIUS and self.size < threat.size:
+						speed: float = (self.vx*self.vx+self.vy*self.vy)**0.5
+						norm_factor:float= speed/distance
+						self.vx = -norm_factor*dx
+						self.vy = -norm_factor*dy
 		
 		# To update the remaining_life
 		current_time: float = pygame.time.get_ticks() / 1000

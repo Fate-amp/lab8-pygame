@@ -18,4 +18,6 @@ The bugs Copilot helped me figure out without any code:
 
 **After Coding**
 I am trying to go through the improvements mentioned in the code-explorer.html:
-1. The nested threat loop
+
+1. **The nested threat loop**
+Idea: Using grids and grid comparison instead of comparing every square to every other square
