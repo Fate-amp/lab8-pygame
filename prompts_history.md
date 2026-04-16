@@ -331,3 +331,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 16-04-2026 17:35
 - **Prompt**: would you fix that for me and add documentation and type hints?
 
+### 16-04-2026 17:36
+- **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "would you fix that for me and add documentation and type hints?" with timestamp 16-04-2026. Summarize that the flee speed calculation was refactored to properly separate direction normalization from speed application, with improved documentation and type hints. Preserve existing template and chronological order.
+
