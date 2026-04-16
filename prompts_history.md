@@ -322,3 +322,6 @@ Automatically captured prompt log. Entries are appended in chronological order (
 
 Mermaid diagrams, performance analysis of the new grid-based flee logic, type hints report, and curated links.
 
+### 16-04-2026 17:31
+- **Prompt**: Can you explain why the flee speed calculation is incorrect?
+
