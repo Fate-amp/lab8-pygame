@@ -334,3 +334,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 16-04-2026 17:36
 - **Prompt**: Append a new entry at the end of JOURNAL.md for the prompt: "would you fix that for me and add documentation and type hints?" with timestamp 16-04-2026. Summarize that the flee speed calculation was refactored to properly separate direction normalization from speed application, with improved documentation and type hints. Preserve existing template and chronological order.
 
+### 20-04-2026 11:41
+- **Prompt**: Turn on the journal logger, turn socratic mode on. I need to implement a chasing behavior so that the bigger squares chase the smaller ones. But I don't know where to start. help me understand in clear steps
+
