@@ -340,3 +340,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 17:19
 - **Prompt**: I tried implementing the chasing feature. Review my code and in socratic mode, tell me why it feels like bigger squares are eating up the smaller ones
 
+### 23-04-2026 17:35
+- **Prompt**: I tried fixing these, here are my questions:1. How do I find a balance between fleeing and chasing? 2. You said I am repeatedly overwriting the bigger square's velocity, how do I choose a certain velocity without being repetitive? 3.How do I keep the bigger squares from catching up to smaller ones?
+
