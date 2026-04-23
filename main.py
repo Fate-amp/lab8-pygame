@@ -12,11 +12,11 @@ import pygame
 WIDTH = 800
 HEIGHT = 600
 FPS = 60
-SQUARE_COUNT = 30
+SQUARE_COUNT = 5
 SQUARE_SIZE = 30
 SQUARE_SIZE_MAX=60
 SQUARE_SIZE_MIN=10
-MAX_SPEED = 15
+MAX_SPEED = 30
 VELOCITY_CHANGE_CHANCE = 0.03
 Color = tuple[int, int, int]
 
@@ -24,7 +24,9 @@ MIN_LIFESPAN:int=5
 MAX_LIFESPAN:int=20
 ROUNDOFF:float=0.1
 CELL_SIZE: int = 100 
-FLEE_RADIUS: float = 60 
+FLEE_RADIUS: float = 50
+CHASE_RADIUS: float=80 
+CHASE_STRENGTH:float = 0.2
 
 class Square:
 	"""Represents one moving square on the screen."""
@@ -100,7 +102,10 @@ class Square:
 					if (cx, cy) not in grid:
 						grid[(cx, cy)] = []
 					grid[(cx, cy)].append(square)
-		
+		threat=None
+		prey=None
+		best_threat_distance: float = float('inf')
+		best_prey_distance: float = float('inf')
 		# Query neighboring grid cells (3×3 neighborhood) for threats.
 		my_cell_x: int = int(self.x // CELL_SIZE)
 		my_cell_y: int = int(self.y // CELL_SIZE)
@@ -109,32 +114,61 @@ class Square:
 			for cy in range(my_cell_y - 1, my_cell_y + 2):
 				if (cx, cy) not in grid:
 					continue
-				
-				for threat in grid[(cx, cy)]:
-					# Skip self-comparison.
-					if threat is self:
-						continue
-					
-					# Calculate displacement vector from self center to threat center.
-					dx: float = (threat.x + threat.size / 2) - (self.x + self.size / 2)
-					dy: float = (threat.y + threat.size / 2) - (self.y + self.size / 2)
-					distance: float = (dx * dx + dy * dy) ** 0.5
-					
-					# Flee if threat is larger and within flee radius.
-					if 0 < distance < FLEE_RADIUS and self.size < threat.size:
-						# Separate direction and speed for stable, predictable fleeing.
+				for target in grid[(cx, cy)]:
+						# Skip self-comparison.
+						if target is self:
+							continue
 						
-						# 1. Calculate current speed (magnitude of velocity vector).
-						current_speed: float = (self.vx * self.vx + self.vy * self.vy) ** 0.5
+						dx: float = (target.x + target.size / 2) - (self.x + self.size / 2)
+						dy: float = (target.y + target.size / 2) - (self.y + self.size / 2)
+						distance: float = (dx * dx + dy * dy) ** 0.5
 						
-						# 2. Normalize flee direction (unit vector pointing away from threat).
-						flee_dir_x: float = -dx / distance  # Negative dx/distance points away
-						flee_dir_y: float = -dy / distance
+						# Track nearest threat if larger and within flee radius.
+						if target.size>self.size and distance<FLEE_RADIUS and distance<best_threat_distance:
+							threat=target
+							best_threat_distance=distance
 						
-						# 3. Apply speed to normalized direction for stable fleeing velocity.
-						self.vx = current_speed * flee_dir_x
-						self.vy = current_speed * flee_dir_y
-		
+						# Track nearest prey if smaller and within chase radius.
+						if target.size<self.size and distance<CHASE_RADIUS and distance<best_prey_distance:
+							prey=target
+							best_prey_distance=distance
+						
+		# If there is a threat, flee
+		if threat is not None:
+				dx: float = (threat.x + threat.size / 2) - (self.x + self.size / 2)
+				dy: float = (threat.y + threat.size / 2) - (self.y + self.size / 2)
+				distance: float = (dx * dx + dy * dy) ** 0.5
+							
+		# 1. Calculate current speed (magnitude of velocity vector).
+				current_speed: float = (self.vx * self.vx + self.vy * self.vy) ** 0.5
+							
+		# 2. Normalize flee direction (unit vector pointing away from threat).
+				flee_dir_x: float = -dx / distance  # Negative dx/distance points away
+				flee_dir_y: float = -dy / distance
+							
+		# 3. Apply speed to normalized direction for stable fleeing velocity.
+				self.vx = current_speed * flee_dir_x
+				self.vy = current_speed * flee_dir_y
+		# If there is a prey, chase
+		elif prey is not None :
+				dx: float = (prey.x + prey.size / 2) - (self.x + self.size / 2)
+				dy: float = (prey.y + prey.size / 2) - (self.y + self.size / 2)
+				distance: float = (dx * dx + dy * dy) ** 0.5
+							
+				# 1. Calculate current speed (magnitude of velocity vector).
+				current_speed: float = (self.vx * self.vx + self.vy * self.vy) ** 0.5
+							
+				# 2. Normalize flee direction (unit vector pointing away from threat).
+				chase_dir_x: float = dx / distance  # Negative dx/distance points away
+				chase_dir_y: float = dy / distance
+							
+				# 3. Apply speed to normalized direction for stable fleeing velocity.
+				self.vx = (1 - CHASE_STRENGTH) * self.vx + CHASE_STRENGTH * current_speed * chase_dir_x
+				self.vy = (1 - CHASE_STRENGTH) * self.vy + CHASE_STRENGTH * current_speed * chase_dir_y
+		# Else, wander
+		else:
+				pass
+
 		# To update the remaining_life
 		current_time: float = pygame.time.get_ticks() / 1000
 		self.remaining_life = self.lifespan - (current_time - self.birth_time)
