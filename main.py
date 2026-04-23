@@ -1,4 +1,15 @@
-"""Simple pygame animation of wandering squares that flee larger neighbors."""
+"""Predator-prey simulation with spatial grid optimization.
+
+This module implements a pygame-based animation featuring multiple colored squares
+that exhibit fleeing and chasing behaviors based on relative size. Larger squares
+chase smaller ones, while smaller squares flee from larger threats.
+
+Key features:
+- Spatial grid partitioning for O(k) neighbor lookup instead of O(n²).
+- Velocity-based steering with normalized direction vectors for stable movement.
+- Size-based predator/prey relationships with configurable radii.
+- Lifespan-based square renewal for continuous simulation.
+"""
 
 import random
 import sys
@@ -7,32 +18,69 @@ from typing import Sequence
 import pygame
 
 
+# ============================================================================
+# WINDOW AND DISPLAY SETTINGS
+# ============================================================================
+WIDTH: int = 800  # Pixel width of game window.
+HEIGHT: int = 600  # Pixel height of game window.
+FPS: int = 60  # Target frames per second.
 
-# Window and animation settings.
-WIDTH = 800
-HEIGHT = 600
-FPS = 60
-SQUARE_COUNT = 5
-SQUARE_SIZE = 30
-SQUARE_SIZE_MAX=60
-SQUARE_SIZE_MIN=10
-MAX_SPEED = 30
-VELOCITY_CHANGE_CHANCE = 0.03
-Color = tuple[int, int, int]
+# ============================================================================
+# SQUARE SIMULATION SETTINGS
+# ============================================================================
+SQUARE_COUNT: int = 5  # Number of squares in the simulation.
+SQUARE_SIZE: int = 30  # Default square size (unused; random per-square).
+SQUARE_SIZE_MAX: int = 60  # Maximum square side length in pixels.
+SQUARE_SIZE_MIN: int = 10  # Minimum square side length in pixels.
+MAX_SPEED: float = 30  # Maximum velocity magnitude (pixels per frame).
+VELOCITY_CHANGE_CHANCE: float = 0.03  # Probability per frame of random direction change.
 
-MIN_LIFESPAN:int=5
-MAX_LIFESPAN:int=20
-ROUNDOFF:float=0.1
-CELL_SIZE: int = 100 
-FLEE_RADIUS: float = 50
-CHASE_RADIUS: float=80 
-CHASE_STRENGTH:float = 0.2
+# ============================================================================
+# COLOR AND LIFESPAN SETTINGS
+# ============================================================================
+Color = tuple[int, int, int]  # RGB color type alias.
+MIN_LIFESPAN: int = 5  # Minimum lifespan in seconds before square expires.
+MAX_LIFESPAN: int = 20  # Maximum lifespan in seconds before square expires.
+ROUNDOFF: float = 0.1  # Threshold for lifespan expiration (seconds).
+
+# ============================================================================
+# SPATIAL GRID AND BEHAVIOR SETTINGS
+# ============================================================================
+CELL_SIZE: int = 100  # Grid cell size in pixels for neighbor partitioning.
+FLEE_RADIUS: float = 50  # Distance (pixels) at which smaller squares detect and flee from larger threats.
+CHASE_RADIUS: float = 80  # Distance (pixels) at which larger squares detect and chase smaller prey.
+CHASE_STRENGTH: float = 0.2  # Blending factor (0.0-1.0) controlling predator steering intensity; higher = more aggressive steering.
 
 class Square:
-	"""Represents one moving square on the screen."""
+	"""Represents one moving square in the predator-prey simulation.
+	
+	Each square has a size, position, velocity, color, and lifespan. Squares interact
+	via fleeing and chasing behaviors based on their relative sizes and proximity.
+	Larger squares chase smaller ones; smaller squares flee from larger ones.
+	"""
 
 	def __init__(self) -> None:
-		"""Initialize randomized motion, color, and lifespan metadata."""
+		"""Initialize a new square with random attributes.
+		
+		Randomly assigns:
+		- size: uniformly from [SQUARE_SIZE_MIN, SQUARE_SIZE_MAX]
+		- position: uniformly within the window bounds
+		- color: random RGB tuple
+		- initial velocity: inversely proportional to size for gameplay balance
+		- lifespan: uniformly from [MIN_LIFESPAN, MAX_LIFESPAN]
+		
+		Attributes:
+			size (int): Side length of the square in pixels.
+			x (float): X-coordinate of top-left corner.
+			y (float): Y-coordinate of top-left corner.
+			vx (float): Velocity in X direction (pixels per frame).
+			vy (float): Velocity in Y direction (pixels per frame).
+			color (Color): RGB tuple for rendering.
+			lifespan (int): Total lifespan in seconds.
+			birth_time (float): Timestamp when square was created (seconds since program start).
+			remaining_life (float): Remaining lifespan (seconds).
+			alive (bool): Whether square is still active in simulation.
+		"""
 		# Start at a random position with a random speed and color.
 		self.size: int = random.randint(SQUARE_SIZE_MIN, SQUARE_SIZE_MAX)
 		self.x: float = random.randint(0, WIDTH - self.size)
@@ -50,7 +98,31 @@ class Square:
 		self.alive: bool = True
 
 	def update(self, squares: Sequence["Square"]) -> None:
-		"""Advance movement, bounce at edges, flee threats, and age the square."""
+		"""Update square state for one frame: movement, steering, and aging.
+		
+		Algorithm:
+		1. Apply random velocity perturbation (VELOCITY_CHANGE_CHANCE probability).
+		2. Advance position based on current velocity.
+		3. Bounce off window edges (invert velocity component).
+		4. Build spatial grid of all squares for efficient neighbor lookup.
+		5. Query 3×3 neighborhood of grid cells to find threats and prey.
+		6. Use nearest-neighbor selection: track best threat (closest larger square) and
+		   best prey (closest smaller square) within their respective radii.
+		7. Apply steering behavior (priority: flee > chase > wander):
+		   - If threat exists: normalize flee vector (away from threat) and apply.
+		   - Else if prey exists: blend current velocity with chase direction
+		     using CHASE_STRENGTH for smooth, less-aggressive steering.
+		   - Else: maintain current wandering motion.
+		8. Decrement remaining lifespan and mark square dead if expired.
+		
+		Complexity:
+		- Time: O(n·c + k) per square update, where n = total squares, c = cells per square,
+		  k = average neighbors in 3×3 neighborhood. Worst case O(n) if all squares in 3×3.
+		- Space: O(n·c) for grid dictionary.
+		
+		Args:
+			squares: Sequence of all square objects for neighbor detection.
+		"""
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
 			self.vx += random.choice([-1, 0, 1]) * (self.size / SQUARE_SIZE_MAX)
@@ -177,14 +249,35 @@ class Square:
 
 
 	def draw(self, surface: pygame.Surface) -> None:
-		"""Draw the square with a slight jitter for a hand-drawn effect."""
+		"""Render the square to the given surface with visual jitter.
+		
+		Adds random pixel offsets (±1 scaled by size) to create a hand-drawn,
+		slightly wobbly appearance on each render.
+		
+		Args:
+			surface: pygame.Surface to draw onto (typically the screen).
+		"""
 		x = self.x + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
 
 
 def main() -> None:
-	"""Run the game loop: input, update, draw, repeat."""
+	"""Initialize pygame and run the main game loop.
+	
+	Steps:
+	1. Initialize pygame and create a windowed display.
+	2. Create SQUARE_COUNT square objects with random initial states.
+	3. Main event loop:
+	   - Process pygame events (quit on window close).
+	   - Update all squares' positions and behaviors.
+	   - Remove expired squares and replace with new ones.
+	   - Clear screen and render all squares.
+	   - Display and tick clock to maintain target FPS.
+	4. Gracefully shut down pygame and exit.
+	
+	This loop runs until the user closes the window or presses quit.
+	"""
 
 	# 1) Start pygame and create window objects.
 	pygame.init()
@@ -192,7 +285,7 @@ def main() -> None:
 	pygame.display.set_caption("Random Moving Squares")
 	clock = pygame.time.Clock()
 
-	# 2) Create 10 square objects.
+	# 2) Create initial squares.
 	squares: list[Square] = [Square() for _ in range(SQUARE_COUNT)]
 
 	# 3) Main loop: handle events, update state, draw frame.
