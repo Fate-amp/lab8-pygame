@@ -355,3 +355,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 19:36
 - **Prompt**: i fixed the critical problem, review again. also, i don't think calculating the distance is right in the target loop, is it? I don't understand your 4th point
 
+### 23-04-2026 19:46
+- **Prompt**: I tried fixing the points you mentioned, review my code again. The problems I have now: 1. The sqares catch up and corner each other and stay there 2. I need you to explain your 4th point clearer
+
