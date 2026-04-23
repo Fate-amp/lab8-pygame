@@ -361,3 +361,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 19:54
 - **Prompt**: review my code again, it seems functional but I'm not sure, and what's the complexity now?
 
+### 23-04-2026 20:00
+- **Prompt**: fix these last 2 issues for me but explain what you did in clear steps
+
