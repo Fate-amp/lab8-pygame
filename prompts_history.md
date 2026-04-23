@@ -343,3 +343,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 17:35
 - **Prompt**: I tried fixing these, here are my questions:1. How do I find a balance between fleeing and chasing? 2. You said I am repeatedly overwriting the bigger square's velocity, how do I choose a certain velocity without being repetitive? 3.How do I keep the bigger squares from catching up to smaller ones?
 
+### 23-04-2026 18:49
+- **Prompt**: what do you mean by flee and stop? break the loop on the detection of threat (or prey)? Also, should I create another loop for the detection of the prey or the threat loop is enough? Or, do I do this? :Finding a threat and a prey, then calculate the speed. But how do I separate the logic? Also, if I want to make sure that the bigger one doesn't catch up, should I clip the speed by a constant defined specifically for the predeator or the prey? How do I slow the predetaor down when it gets close?
+
