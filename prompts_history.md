@@ -370,3 +370,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 20:28
 - **Prompt**: document my code and add type hints
 
+### 23-04-2026 20:32
+- **Prompt**: create the code-explorer again
+
