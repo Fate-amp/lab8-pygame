@@ -1,151 +1,955 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Code Explorer — main.py (Spatial Grid Optimized)</title>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<style>
-:root {
-  --bg: #1e1e2e;
-  --surface: #2a2a3e;
-  --surface2: #313148;
-  --text: #cdd6f4;
-  --muted: #a6adc8;
-  --accent: #89b4fa;
-  --green: #a6e3a1;
-  --yellow: #f9e2af;
-  --red: #f38ba8;
-  --mono: 'Courier New', Courier, monospace;
-  --radius: 8px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; }
-a { color: var(--accent); }
-a:hover { text-decoration: underline; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Explorer: lab8-pygame - Predator-Prey Simulation</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-header { padding: 1.5rem 2rem; border-bottom: 1px solid #3a3a55; background: var(--surface); }
-header h1 { font-size: 1.4rem; color: var(--accent); letter-spacing: -0.3px; }
-header p { color: var(--muted); font-size: 0.88rem; margin-top: 0.2rem; }
-header .file-badge { display: inline-block; background: var(--surface2); border-radius: 4px; padding: 0.1rem 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--yellow); margin-top: 0.3rem; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
 
-/* Tab navigation */
-.tab-nav { display: flex; padding: 0 2rem; background: var(--surface); border-bottom: 1px solid #3a3a55; flex-wrap: wrap; gap: 0; }
-.tab-btn { padding: 0.75rem 1.2rem; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 0.88rem; border-bottom: 2px solid transparent; transition: all 0.18s; white-space: nowrap; }
-.tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-/* Tab panels */
-.tab-panel { display: none; padding: 2rem; max-width: 1280px; margin: 0 auto; }
-.tab-panel.active { display: block; }
+        header {
+            background: rgba(20, 20, 35, 0.9);
+            border-bottom: 2px solid #00d9ff;
+            padding: 30px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.1);
+        }
 
-/* Cards */
-.card { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #3a3a55; }
-.card h3 { color: var(--accent); margin-bottom: 0.6rem; font-size: 1rem; }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-/* Two-column */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-@media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
 
-/* Architecture sub-tabs */
-.arch-subnav { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-.arch-btn { padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid #444; background: none; color: var(--muted); cursor: pointer; font-size: 0.82rem; transition: all 0.18s; }
-.arch-btn:hover { border-color: var(--accent); color: var(--text); }
-.arch-btn.active { background: var(--accent); color: #1e1e2e; border-color: var(--accent); font-weight: 600; }
-.arch-panel { display: none; }
-.arch-panel.active { display: block; }
+        .file-badge {
+            background: #00d9ff;
+            color: #0f0f1e;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
 
-.diag-container { background: var(--surface2); border-radius: var(--radius); padding: 1.5rem; min-height: 280px; overflow-x: auto; display: flex; justify-content: center; align-items: flex-start; }
-.diag-container svg { max-width: 100%; height: auto; }
-.diag-title { color: var(--accent); font-size: 1.05rem; font-weight: 600; margin-bottom: 0.75rem; }
-.diag-caption { color: var(--muted); font-size: 0.82rem; margin-top: 0.75rem; font-style: italic; border-left: 2px solid #444; padding-left: 0.6rem; }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            background: linear-gradient(135deg, #00d9ff 0%, #00ff88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-/* Patterns */
-.pattern-card { background: var(--surface2); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; border: 1px solid #3a3a55; }
-.pattern-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-.pattern-icon { font-size: 1.1rem; }
-.pattern-title { font-weight: 600; color: var(--text); font-size: 0.95rem; }
-.pattern-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.75rem; }
-.pattern-layers { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.6rem; }
-.layer { font-size: 0.8rem; padding: 0.28rem 0.6rem; border-radius: 4px; line-height: 1.4; }
-.layer-basics   { background: #1e3a2a; color: #a6e3a1; }
-.layer-eng      { background: #3a2e1a; color: #f9e2af; }
-.layer-arch     { background: #1a2a3e; color: #89b4fa; }
-.layer-label    { font-weight: 700; margin-right: 0.35rem; }
-.ext-link       { display: inline-block; font-size: 0.8rem; color: var(--accent); text-decoration: none; margin-top: 0.2rem; }
-.ext-link:hover { text-decoration: underline; }
-.fix-hint       { background: #1e1e2e; border-left: 3px solid var(--yellow); padding: 0.4rem 0.7rem; border-radius: 0 4px 4px 0; font-size: 0.8rem; color: var(--text); margin-top: 0.5rem; }
-code { font-family: var(--mono); font-size: 0.85em; background: #12121e; padding: 0.05em 0.3em; border-radius: 3px; color: var(--yellow); }
+        .header-meta {
+            font-size: 13px;
+            color: #a0a0c0;
+            font-style: italic;
+        }
 
-/* Badges */
-.badge { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 12px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px; }
-.badge-high   { background: #4a1a2a; color: var(--red); }
-.badge-medium { background: #3e2e10; color: var(--yellow); }
-.badge-low    { background: #1a3220; color: var(--green); }
-.badge-score  { background: var(--surface2); color: var(--accent); font-size: 1rem; font-weight: 700; padding: 0.3rem 0.8rem; border: 1px solid var(--accent); border-radius: var(--radius); }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
 
-/* Type Hints */
-.type-banner { display: flex; align-items: center; gap: 1.2rem; padding: 1.1rem 1.5rem; background: var(--surface2); border-radius: var(--radius); margin-bottom: 1.5rem; border: 1px solid #3a3a55; }
-.score-big { font-size: 2.2rem; font-weight: 800; color: var(--accent); line-height: 1; }
-.score-verdict { color: var(--muted); font-size: 0.88rem; }
+        .tab-button {
+            padding: 12px 20px;
+            background: rgba(50, 50, 80, 0.6);
+            border: 1px solid #444;
+            border-radius: 8px 8px 0 0;
+            color: #a0a0c0;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
 
-/* Code Review */
-.review-layout { display: grid; grid-template-columns: 1fr 1.5fr; gap: 1.5rem; }
-@media (max-width: 800px) { .review-layout { grid-template-columns: 1fr; } }
-.review-left { background: var(--surface); border-radius: var(--radius); padding: 1.1rem; border: 1px solid #3a3a55; }
-.review-right { background: var(--surface); border-radius: var(--radius); padding: 1.5rem; border: 1px solid #3a3a55; min-height: 320px; }
-.review-item { padding: 0.7rem 0.8rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.5rem; border: 1px solid transparent; transition: all 0.15s; }
-.review-item:hover { border-color: #444; background: var(--surface2); }
-.review-item.selected { border-color: var(--accent); background: var(--surface2); }
-.ri-titlerow { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
-.ri-title { font-size: 0.88rem; font-weight: 600; color: var(--text); }
-.ri-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.2rem; }
-pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-size: 0.76rem; overflow-x: auto; color: #cdd6f4; font-family: var(--mono); margin: 0.6rem 0; line-height: 1.5; border: 1px solid #2a2a3e; }
-.detail-head { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; }
-.detail-title { color: var(--accent); font-size: 1rem; font-weight: 700; }
-.detail-body { color: var(--muted); font-size: 0.86rem; line-height: 1.65; margin-bottom: 0.9rem; }
-.hint-box { background: var(--surface2); border-left: 3px solid var(--accent); padding: 0.6rem 0.8rem; border-radius: 0 4px 4px 0; font-size: 0.84rem; color: var(--text); }
+        .tab-button:hover {
+            background: rgba(50, 100, 150, 0.8);
+            color: #00d9ff;
+            border-color: #00d9ff;
+        }
 
-/* Performance */
-.perf-card { background: var(--surface2); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; border: 1px solid #3a3a55; }
-.perf-title { font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
-.perf-desc { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .tab-button.active {
+            background: rgba(0, 217, 255, 0.15);
+            color: #00d9ff;
+            border-color: #00d9ff;
+            border-bottom: 3px solid #00d9ff;
+        }
 
-/* Next Steps */
-.ns-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.2rem; background: var(--surface2); border-radius: var(--radius); margin-bottom: 0.8rem; border: 1px solid #3a3a55; }
-.ns-num { font-size: 1.4rem; font-weight: 800; color: var(--accent); min-width: 2rem; line-height: 1.2; }
-.ns-text a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
-.ns-text a:hover { text-decoration: underline; }
-.ns-desc { color: var(--muted); font-size: 0.83rem; margin-top: 0.2rem; }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
 
-/* Fallback */
-.fallback { background: #2a1215; color: var(--red); padding: 1rem; border-radius: 6px; font-size: 0.72rem; font-family: var(--mono); overflow-x: auto; white-space: pre-wrap; }
+        .tab-content.active {
+            display: block;
+        }
 
-/* Section headings */
-.section-head { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; }
-.section-head.green { color: var(--green); }
-.section-head.yellow { color: var(--yellow); }
-.section-head.red { color: var(--red); }
-</style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #00d9ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #00d9ff 0%, #00ff88 100%);
+            border-radius: 2px;
+        }
+
+        .arch-subnav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .arch-tab {
+            padding: 10px 16px;
+            background: rgba(40, 40, 70, 0.8);
+            border: 1px solid #555;
+            border-radius: 6px;
+            color: #a0a0c0;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .arch-tab:hover {
+            background: rgba(50, 100, 150, 0.8);
+            color: #00d9ff;
+            border-color: #00d9ff;
+        }
+
+        .arch-tab.active {
+            background: rgba(0, 217, 255, 0.2);
+            color: #00d9ff;
+            border-color: #00d9ff;
+        }
+
+        .arch-panels {
+            display: grid;
+            gap: 30px;
+        }
+
+        .arch-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .arch-panel.active {
+            display: block;
+        }
+
+        .diag-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        .diag-container {
+            background: rgba(20, 20, 35, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
+        .diag-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .diag-caption {
+            font-size: 13px;
+            color: #a0a0c0;
+            font-style: italic;
+            margin-top: 10px;
+        }
+
+        .diag-error {
+            color: #ff6b6b;
+            padding: 15px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .col-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .col-title.success {
+            color: #00ff88;
+            border-bottom-color: #00ff88;
+        }
+
+        .col-title.warning {
+            color: #ffa500;
+            border-bottom-color: #ffa500;
+        }
+
+        .pattern-card {
+            background: rgba(30, 30, 50, 0.9);
+            border-left: 4px solid #00d9ff;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .pattern-card:hover {
+            background: rgba(40, 40, 65, 0.95);
+            transform: translateX(4px);
+        }
+
+        .pattern-card.warning {
+            border-left-color: #ffa500;
+        }
+
+        .pattern-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .pattern-card.success .pattern-label {
+            color: #00ff88;
+        }
+
+        .pattern-card.warning .pattern-label {
+            color: #ffa500;
+        }
+
+        .pattern-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #e0e0e0;
+        }
+
+        .pattern-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .layer {
+            background: rgba(10, 10, 20, 0.6);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .layer-label {
+            font-weight: 600;
+            color: #00d9ff;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .layer-basics {
+            border-left: 2px solid #4da6ff;
+        }
+
+        .layer-eng {
+            border-left: 2px solid #00d9ff;
+        }
+
+        .layer-arch {
+            border-left: 2px solid #00ff88;
+        }
+
+        .type-banner {
+            background: rgba(30, 80, 120, 0.4);
+            border: 1px solid #00d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .type-score {
+            font-size: 36px;
+            font-weight: 700;
+            color: #00ff88;
+            margin: 10px 0;
+        }
+
+        .type-verdict {
+            font-size: 14px;
+            color: #a0a0c0;
+        }
+
+        .review-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: 600px;
+        }
+
+        .review-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .review-item {
+            background: rgba(30, 30, 50, 0.8);
+            border-left: 4px solid #00d9ff;
+            padding: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .review-item:hover {
+            background: rgba(40, 40, 65, 0.95);
+            border-left-color: #ffa500;
+        }
+
+        .review-item.selected {
+            background: rgba(0, 217, 255, 0.15);
+            border-left-color: #ffa500;
+        }
+
+        .review-item-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #00d9ff;
+            margin-bottom: 6px;
+        }
+
+        .review-item-severity {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 3px;
+            margin-top: 6px;
+        }
+
+        .severity-high {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .severity-medium {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        .severity-low {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        #review-detail-panel {
+            background: rgba(20, 20, 35, 0.9);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .review-detail-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00ff88;
+            margin-bottom: 12px;
+        }
+
+        .review-detail-severity {
+            margin-bottom: 15px;
+        }
+
+        .review-detail-section {
+            margin-bottom: 18px;
+        }
+
+        .review-detail-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #00d9ff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .review-detail-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #c0c0d0;
+        }
+
+        .code-snippet {
+            background: #0a0a14;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            overflow-x: auto;
+            margin: 8px 0;
+            color: #00ff88;
+        }
+
+        .perf-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .perf-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .perf-item {
+            background: rgba(30, 30, 50, 0.8);
+            border-radius: 6px;
+            padding: 16px;
+        }
+
+        .perf-item.win {
+            border-left: 4px solid #00ff88;
+        }
+
+        .perf-item.risk {
+            border-left: 4px solid #ffa500;
+        }
+
+        .perf-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .perf-item.win .perf-label {
+            color: #00ff88;
+        }
+
+        .perf-item.risk .perf-label {
+            color: #ffa500;
+        }
+
+        .perf-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .perf-text {
+            font-size: 13px;
+            color: #a0a0c0;
+            line-height: 1.5;
+        }
+
+        .perf-score {
+            background: rgba(20, 20, 35, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .badge-score {
+            font-size: 32px;
+            font-weight: 700;
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+
+        .score-verdict {
+            font-size: 13px;
+            color: #a0a0c0;
+        }
+
+        .ns-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .ns-item {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .ns-item:hover {
+            background: rgba(40, 40, 65, 0.95);
+            border-color: #00d9ff;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+        }
+
+        .ns-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .ns-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #00d9ff;
+            margin-bottom: 10px;
+        }
+
+        .ns-description {
+            font-size: 13px;
+            color: #a0a0c0;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .ns-link {
+            display: inline-block;
+            color: #00ff88;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .ns-link:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateX(2px);
+        }
+
+        @media (max-width: 1024px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .review-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .perf-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden-error {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 
 <header>
-  <h1>Code Explorer</h1>
-  <span class="file-badge">main.py</span>
-  <p style="margin-top:0.4rem;">Lab 8 Pygame animation project with <strong>spatial grid optimization</strong> for fleeing behavior. Focus: main.py. Audience: first-year CS students learning game loops, spatial indexing, and performance optimization.</p>
-</header>
+        <div class="header-content">
+            <div class="header-title">
+                <div class="file-badge">main.py</div>
+                <h1>Predator-Prey Simulation Explorer</h1>
+            </div>
+            <div class="header-meta">Lab 8 - Pygame Game Development with Spatial Optimization | First-Year CS Learning Module</div>
+        </div>
+    </header>
 
-<nav class="tab-nav">
-<button class="tab-btn active" onclick="switchTab('architecture', this)">Architecture</button>
-<button class="tab-btn" onclick="switchTab('patterns', this)">Patterns</button>
-<button class="tab-btn" onclick="switchTab('typehints', this)">Type Hints</button>
-<button class="tab-btn" onclick="switchTab('codereview', this)">Code Review</button>
-<button class="tab-btn" onclick="switchTab('performance', this)">Performance</button>
-<button class="tab-btn" onclick="switchTab('nextsteps', this)">Next Steps</button>
-</nav>
+    <div class="container">
+        <!-- TAB NAVIGATION -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="selectTab('architecture')">🏗️ Architecture</button>
+            <button class="tab-button" onclick="selectTab('patterns')">✅ Patterns</button>
+            <button class="tab-button" onclick="selectTab('typehints')">🏷️ Type Hints</button>
+            <button class="tab-button" onclick="selectTab('codereview')">📋 Code Review</button>
+            <button class="tab-button" onclick="selectTab('performance')">⚡ Performance</button>
+            <button class="tab-button" onclick="selectTab('nextsteps')">🚀 Next Steps</button>
+        </div>
 
-<div class="tab-panel active" id="tab-architecture">
+        <!-- ARCHITECTURE TAB -->
+        <div id="architecture" class="tab-content active">
+            <div class="section-title">Architecture & System Design</div>
+
+            <div class="arch-subnav">
+                <button class="arch-tab active" onclick="selectArch('class-structure')">Class Structure</button>
+                <button class="arch-tab" onclick="selectArch('algorithm-flow')">Algorithm Flow</button>
+                <button class="arch-tab" onclick="selectArch('call-graph')">Call Graph</button>
+                <button class="arch-tab" onclick="selectArch('sequence')">Sequence Diagram</button>
+                <button class="arch-tab" onclick="selectArch('data-flow')">Data Flow</button>
+            </div>
+
+            <div class="arch-panels">
+                <!-- CLASS STRUCTURE -->
+                <div id="class-structure" class="arch-panel active">
+                    <div class="diag-title">Class and Type Relationships</div>
+                    <div class="diag-container" id="diag-classes"></div>
+                    <div class="diag-caption">The Square class encapsulates all entity state and behavior. Type alias Color simplifies RGB tuples used throughout. Main game loop coordinates square updates and rendering.</div>
+                </div>
+
+                <!-- ALGORITHM FLOW -->
+                <div id="algorithm-flow" class="arch-panel">
+                    <div class="diag-title">Square.update() - Frame Update Algorithm</div>
+                    <div class="diag-container" id="diag-algorithm"></div>
+                    <div class="diag-caption">For each frame, every square undergoes velocity perturbation, position update, collision handling, neighbor detection via spatial grid, and behavior steering (flee/chase/wander).</div>
+                </div>
+
+                <!-- CALL GRAPH -->
+                <div id="call-graph" class="arch-panel">
+                    <div class="diag-title">Function Call Relationships</div>
+                    <div class="diag-container" id="diag-calls"></div>
+                    <div class="diag-caption">main() initializes pygame and enters the game loop. Each frame calls update() on all squares, then draw() for rendering. Square.update() internally performs spatial partitioning and behavior logic.</div>
+                </div>
+
+                <!-- SEQUENCE DIAGRAM -->
+                <div id="sequence" class="arch-panel">
+                    <div class="diag-title">Runtime Sequence: One Frame Execution</div>
+                    <div class="diag-container" id="diag-sequence"></div>
+                    <div class="diag-caption">Event processing → all squares updated (each builds grid and steers) → dead squares replaced → screen cleared and redrawn → display flipped and clock ticked.</div>
+                </div>
+
+                <!-- DATA FLOW -->
+                <div id="data-flow" class="arch-panel">
+                    <div class="diag-title">Data Flow: Behavior Decision Pipeline</div>
+                    <div class="diag-container" id="diag-dataflow"></div>
+                    <div class="diag-caption">Position and size data flows through spatial grid lookup, enabling threat and prey detection. Threat/prey data drives steering decisions that modify velocity, which in turn updates position.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PATTERNS TAB -->
+        <div id="patterns" class="tab-content">
+            <div class="section-title">Patterns & Best Practices</div>
+
+            <h3 style="font-size: 18px; margin-bottom: 25px; color: #00ff88;">✅ Good Patterns</h3>
+
+            <div class="pattern-card success">
+                <div class="pattern-label">✅ Pattern 1</div>
+                <div class="pattern-title">Spatial Grid Optimization (O(k) vs O(n²))</div>
+                <div class="pattern-layers">
+                    <div class="layer layer-basics">
+                        <div class="layer-label">Basics</div>
+                        <div>Instead of checking all n squares for neighbors, partition the 800×600 space into 100-pixel cells. Each square looks only at its 3×3 neighborhood of cells, finding ~k neighbors in O(1) amortized time.</div>
+                    </div>
+                    <div class="layer layer-eng">
+                        <div class="layer-label">Engineering Insight</div>
+                        <div>The grid dict maps (cell_x, cell_y) to lists of squares. When querying neighbors, iterate only over the ~9 cells around the square's position. Worst case is O(n) if all squares cluster, but typical case is O(n·c) where c ≈ constant.</div>
+                    </div>
+                    <div class="layer layer-arch">
+                        <div class="layer-label">Architecture Insight</div>
+                        <div>This is a classic **space partitioning** technique used in graphics engines, physics simulators, and real-time games. It scales to thousands of entities with minimal frame-time impact. The trade-off: using O(n·c) memory for the grid.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pattern-card success">
+                <div class="pattern-label">✅ Pattern 2</div>
+                <div class="pattern-title">Normalized Direction Vectors for Stable Steering</div>
+                <div class="pattern-layers">
+                    <div class="layer layer-basics">
+                        <div class="layer-label">Basics</div>
+                        <div>When fleeing or chasing, the code normalizes the direction vector (divide by distance) before applying speed. This ensures velocity magnitude stays constant, preventing wild acceleration spikes.</div>
+                    </div>
+                    <div class="layer layer-eng">
+                        <div class="layer-label">Engineering Insight</div>
+                        <div>In fleeing: `flee_dir = -dv / distance` produces a unit vector. Multiplying by `current_speed` yields a stable velocity. In chasing: blend `current_velocity` with chase direction using `CHASE_STRENGTH` (0.2), creating smooth steering without jerking.</div>
+                    </div>
+                    <div class="layer layer-arch">
+                        <div class="layer-label">Architecture Insight</div>
+                        <div>This is **vector normalization** in game AI: separating direction (unit vector) from magnitude (speed). Allows independent control of "where to go" vs. "how fast." Critical for responsive, balanced behavior tuning.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pattern-card success">
+                <div class="pattern-label">✅ Pattern 3</div>
+                <div class="pattern-title">Separation of Concerns: Update, Draw, Loop</div>
+                <div class="pattern-layers">
+                    <div class="layer layer-basics">
+                        <div class="layer-label">Basics</div>
+                        <div>Square.update() handles logic (physics, behavior). Square.draw() handles rendering. main() orchestrates the loop. Each method has one clear responsibility.</div>
+                    </div>
+                    <div class="layer layer-eng">
+                        <div class="layer-label">Engineering Insight</div>
+                        <div>If you want to change AI behavior, edit update(). If you want visual style, edit draw(). If you want frame rate or event handling, edit main(). Changes are isolated and don't ripple through the system.</div>
+                    </div>
+                    <div class="layer layer-arch">
+                        <div class="layer-label">Architecture Insight</div>
+                        <div>This mirrors the **Model-View-Controller (MVC)** pattern: Square is Model (data + logic), draw() is View, main() is Controller. Scales to complex projects when applied consistently.</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 18px; margin-bottom: 25px; margin-top: 40px; color: #ffa500;">⚠️ Potential Issues</h3>
+
+            <div class="pattern-card warning">
+                <div class="pattern-label">⚠️ Issue 1</div>
+                <div class="pattern-title">Inefficient Grid Recalculation Every Frame</div>
+                <div class="pattern-layers">
+                    <div class="layer layer-basics">
+                        <div class="layer-label">Basics</div>
+                        <div>Inside Square.update(), the spatial grid is rebuilt for ALL squares every single frame. This is unnecessary: each square only needs to query neighbors once per update cycle.</div>
+                    </div>
+                    <div class="layer layer-eng">
+                        <div class="layer-label">Engineering Insight</div>
+                        <div>Current: O(n) grid rebuilds × 60 fps × 5 squares = regenerated 300 times/sec. Better: build grid once per frame in main(), pass to all square.update() calls. Reduces dict overhead and redundant lookups.</div>
+                    </div>
+                    <div class="layer layer-arch">
+                        <div class="layer-label">Architecture Insight</div>
+                        <div>This violates the **Don't Repeat Yourself (DRY)** principle. Shared data structures (grid) should live in a higher scope (main loop) and injected into methods, not reconstructed in each method.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pattern-card warning">
+                <div class="pattern-label">⚠️ Issue 2</div>
+                <div class="pattern-title">Potential Division by Zero in Vector Normalization</div>
+                <div class="pattern-layers">
+                    <div class="layer layer-basics">
+                        <div class="layer-label">Basics</div>
+                        <div>If a threat or prey square occupies the exact same center as the current square, distance becomes 0. Dividing by zero produces NaN, corrupting velocity.</div>
+                    </div>
+                    <div class="layer layer-eng">
+                        <div class="layer-label">Engineering Insight</div>
+                        <div>Add a guard: `if distance > 0.01: normalize_and_steer()`. Or clamp distance to a minimum epsilon value. Without this, overlapping squares can freeze or behave erratically.</div>
+                    </div>
+                    <div class="layer layer-arch">
+                        <div class="layer-label">Architecture Insight</div>
+                        <div>**Defensive programming**: anticipate edge cases (overlaps, zero vectors, NaN) and handle them explicitly. In game dev, these edge cases cause hard-to-debug glitches that surface only under specific conditions.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TYPE HINTS TAB -->
+        <div id="typehints" class="tab-content">
+            <div class="section-title">Type Hint Analysis</div>
+
+            <div class="type-banner">
+                <div style="font-size: 14px; color: #a0a0c0;">Type Hint Coverage Score</div>
+                <div class="type-score">4.5 / 5</div>
+                <div class="score-verdict">Excellent consistency and clarity. Type hints enhance code readability and IDE support.</div>
+            </div>
+
+            <div class="two-col">
+                <div>
+                    <div class="col-title success">✅ Strengths (Type Hints)</div>
+
+                    <div class="pattern-card success">
+                        <div class="pattern-label">Strength 1</div>
+                        <div class="pattern-title">Function Signatures Are Fully Annotated</div>
+                        <div style="font-size: 13px; color: #c0c0d0; margin-top: 10px;">All methods explicitly declare parameter and return types. For example, `def update(self, squares: Sequence["Square"]) -> None:` makes the contract clear: accept a sequence of Square objects, return nothing.</div>
+                    </div>
+
+                    <div class="pattern-card success">
+                        <div class="pattern-label">Strength 2</div>
+                        <div class="pattern-title">Type Alias for Readability</div>
+                        <div style="font-size: 13px; color: #c0c0d0; margin-top: 10px;">The line `Color = tuple[int, int, int]` creates a semantic alias. Using `color: Color` instead of `color: tuple[int, int, int]` improves code intent. Readers immediately understand that this tuple represents RGB values.</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="col-title warning">⚠️ Gaps (Type Hints)</div>
+
+                    <div class="pattern-card warning">
+                        <div class="pattern-label">Gap 1</div>
+                        <div class="pattern-title">Missing Dict Type Annotations</div>
+                        <div style="font-size: 13px; color: #c0c0d0; margin-top: 10px;">The spatial grid is declared as `grid: dict[tuple[int, int], list[Square]] = {}`. This is great. However, intermediate variables like `cell_x_min`, `cell_x_max` are untyped. Consider: `cell_x_min: int = int(...)` for full clarity.</div>
+                    </div>
+
+                    <div class="pattern-card warning">
+                        <div class="pattern-label">Gap 2</div>
+                        <div class="pattern-title">No Type Hints on Module-Level Variables</div>
+                        <div style="font-size: 13px; color: #c0c0d0; margin-top: 10px;">Constants like `WIDTH` and `SQUARE_COUNT` are annotated with `: int`, which is excellent. But loop variables inside update() (e.g., `for cx in range(...)`) are not explicitly typed. Standard practice accepts this as acceptable.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CODE REVIEW TAB -->
+        <div id="codereview" class="tab-content">
+            <div class="section-title">Code Review & Improvement Opportunities</div>
+
+            <div class="review-layout">
+                <div class="review-items" id="review-list">
+                    <!-- Review items will be populated by JavaScript -->
+                </div>
+
+                <div id="review-detail-panel">
+                    <div style="text-align: center; color: #a0a0c0; padding: 40px 20px;">
+                        <div style="font-size: 18px; margin-bottom: 10px;">← Click a review item to see details</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE TAB -->
+        <div id="performance" class="tab-content">
+            <div class="section-title">Performance Analysis</div>
+
+            <div class="perf-grid">
+                <div class="perf-section">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #00ff88;">🚀 Performance Wins</div>
+
+                    <div class="perf-item win">
+                        <div class="perf-label">Win 1</div>
+                        <div class="perf-title">Spatial Grid Reduces Neighbor Lookup from O(n²) to O(k)</div>
+                        <div class="perf-text">By partitioning space into 100×100 cells, neighbor queries run in constant (or near-constant) time. With 5 squares and FLEE_RADIUS=50, each square checks ~4 neighbors instead of 4. At scale (100+ squares), this saves thousands of distance calculations per frame.</div>
+                    </div>
+
+                    <div class="perf-item win">
+                        <div class="perf-label">Win 2</div>
+                        <div class="perf-title">Normalized Vectors Eliminate Vector Recalculation</div>
+                        <div class="perf-text">Fleeing and chasing both normalize direction before scaling by speed. This avoids redundant distance calculations and keeps velocity magnitude stable—no expensive magnitude recomputation needed.</div>
+                    </div>
+                </div>
+
+                <div class="perf-section">
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #ffa500;">🐢 Performance Risks</div>
+
+                    <div class="perf-item risk">
+                        <div class="perf-label">Risk 1</div>
+                        <div class="perf-title">Grid Rebuilt Per Square Per Frame</div>
+                        <div class="perf-text">Grid is reconstructed inside each square's update() call. Current: n squares × rebuilding full grid = O(n) grid reconstructions per frame. Better: build once in main(), pass to update(). At 1000 squares, this could add 10ms+ of overhead.</div>
+                    </div>
+
+                    <div class="perf-item risk">
+                        <div class="perf-label">Risk 2</div>
+                        <div class="perf-title">Redundant Distance Calculations (Flee/Chase)</div>
+                        <div class="perf-text">Once threat/prey are found, distance is recalculated a second time (for normalization). Store it as `best_threat_distance` and reuse. Saves ~2 sqrt() calls per square per frame—adds up at scale.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="perf-score">
+                <div class="badge-score">3 / 6</div>
+                <div class="score-verdict"><strong>Moderate Performance:</strong> Spatial grid is a huge win, but redundant grid rebuilds and distance recalculations leak efficiency. At 5 squares, imperceptible. At 100+, noticeable frame lag.</div>
+            </div>
+        </div>
+
+        <!-- NEXT STEPS TAB -->
+        <div id="nextsteps" class="tab-content">
+            <div class="section-title">Learning Resources & Next Steps</div>
+
+            <div class="ns-grid">
+                <div class="ns-item">
+                    <div class="ns-icon">📚</div>
+                    <div class="ns-title">Spatial Partitioning Techniques</div>
+                    <div class="ns-description">Master quadtrees, octrees, and grid-based partitioning. Essential for scaling simulations to thousands of entities without frame-rate collapse.</div>
+                    <a href="https://en.wikipedia.org/wiki/Quadtree" target="_blank" class="ns-link">Learn More</a>
+                </div>
+
+                <div class="ns-item">
+                    <div class="ns-icon">🎮</div>
+                    <div class="ns-title">Game AI Steering Behaviors</div>
+                    <div class="ns-description">Explore seek, flee, pursue, and evade algorithms. Understand blending and priority hierarchies for complex NPC behavior trees.</div>
+                    <a href="https://en.wikipedia.org/wiki/Steering_behavior" target="_blank" class="ns-link">Learn More</a>
+                </div>
+
+                <div class="ns-item">
+                    <div class="ns-icon">⚙️</div>
+                    <div class="ns-title">Vector Math in Game Dev</div>
+                    <div class="ns-description">Normalization, dot products, cross products. Understand the math behind steering, collision detection, and physics simulation.</div>
+                    <a href="https://www.khanacademy.org/math/linear-algebra/vectors-and-spaces/vectors" target="_blank" class="ns-link">Learn More</a>
+                </div>
+
+                <div class="ns-item">
+                    <div class="ns-icon">🐍</div>
+                    <div class="ns-title">Python Type Hints & Generics</div>
+                    <div class="ns-description">Master `Sequence`, `Union`, `Optional`, and custom type aliases. Type hints make code self-documenting and enable IDE autocompletion.</div>
+                    <a href="https://docs.python.org/3/library/typing.html" target="_blank" class="ns-link">Learn More</a>
+                </div>
+
+                <div class="ns-item">
+                    <div class="ns-icon">🎯</div>
+                    <div class="ns-title">Performance Profiling in Pygame</div>
+                    <div class="ns-description">Use frame timing, cProfile, and pygame.time to identify bottlenecks. Measure before optimizing to avoid premature optimization.</div>
+                    <a href="https://www.pygame.org/docs/ref/time.html" target="_blank" class="ns-link">Learn More</a>
+                </div>
+
+                <div class="ns-item">
+                    <div class="ns-icon">🏗️</div>
+                    <div class="ns-title">Refactor Challenge: Extract Grid to a Class</div>
+                    <div class="ns-description">Try creating a SpatialGrid class that encapsulates grid logic. This refactor will deepen your understanding of abstraction and separation of concerns.</div>
+                    <a href="https://refactoring.guru/refactoring/techniques/extract-class" target="_blank" class="ns-link">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
   <div class="card">
     <h3>Architecture Overview</h3>
     <p style="color:var(--muted);font-size:0.87rem;">A classic game loop with a spatial optimization layer: initialize once, then repeatedly process input, update state using spatial grid for neighbor lookup, and render output at 60 FPS.</p>
@@ -459,261 +1263,292 @@ pre.snippet { background: #12121e; border-radius: 5px; padding: 0.7rem; font-siz
 </div>
 
 <script>
-// ── Tab switching ──
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
+// Tab switching
+function selectTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
 }
 
-// ── Architecture sub-tabs ──
-function switchArch(name, btn) {
-  document.querySelectorAll('.arch-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.arch-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('arch-' + name).classList.add('active');
-  btn.classList.add('active');
+// Architecture subnav
+function selectArch(archName) {
+    document.querySelectorAll('.arch-panel').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.arch-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById(archName).classList.add('active');
+    event.target.classList.add('active');
 }
 
-// ── Code Review ──
-const reviewItems = [
-  {
-    id: 0,
-    title: 'Flee Speed Calculation Incorrect',
-    severity: 'high',
-    snippet: 'speed: float = (self.vx*self.vx+self.vy*self.vy)**0.5\nnorm_factor: float = speed/distance\nself.vx = -norm_factor*dx\nself.vy = -norm_factor*dy',
-    shortNote: 'Correctness: velocity magnitude used as scale; creates unstable steering.',
-    fullExplanation: 'The flee code computes speed as the magnitude of current velocity, then divides distance by that magnitude.\nThis mixes two concepts: direction (from threat position) and speed (from current motion).\nThe result is that flee direction depends on how fast the square was already moving, not just on the threat direction.\nThis causes unpredictable flee arcs and can oversteer or understeer depending on prior velocity.',
-    improvementHint: 'Separate concerns: compute flee direction purely from (threat position - self position), normalize it, then scale by a fixed flee speed.'
-  },
-  {
-    id: 1,
-    title: 'Grid Rebuild Is O(n) Per Frame',
-    severity: 'high',
-    snippet: 'grid: dict[tuple[int, int], list[Square]] = {}\nfor square in squares:\n  cell_x_min = int(square.x // CELL_SIZE)\n  cell_x_max = int((square.x + square.size) // CELL_SIZE)\n  ...\n  for cx in range(cell_x_min, cell_x_max + 1):\n    for cy in range(cell_y_min, cell_y_max + 1):\n      grid[(cx, cy)].append(square)',
-    shortNote: 'Performance: full grid rebuild dominates; O(k) lookups benefit limited.',
-    fullExplanation: 'The spatial grid is constructed completely from scratch in every call to update().\nEach square must compute which cells it occupies, and the grid dictionary is populated.\nThis is O(n × m) where n is square count and m is cells per square (usually small).\nFor 30 squares at small CELL_SIZE, this is acceptable. But at SQUARE_COUNT &gt; 300 or smaller CELL_SIZE, rebuilds can exceed flee lookup time.\nDynamic structures (QuadTree, incremental grid) or temporal coherence (reuse + delta updates) require more code but scale better.',
-    improvementHint: 'For production: consider a QuadTree or track grid changes incrementally (add/remove squares from cells during movement).'
-  },
-  {
-    id: 2,
-    title: 'Distance Comparisons Use Sqrt',
-    severity: 'medium',
-    snippet: 'dx: float = (threat.x + threat.size / 2) - (self.x + self.size / 2)\ndy: float = (threat.y + threat.size / 2) - (self.y + self.size / 2)\ndistance: float = (dx*dx+dy*dy)**0.5\n\nif 0 < distance < FLEE_RADIUS and self.size < threat.size:',
-    shortNote: 'Performance: sqrt is expensive; squared distance comparison avoids it.',
-    fullExplanation: 'In the inner flee loop, every threat candidate requires distance = sqrt(dx² + dy²).\nSquare root is a relatively expensive operation (much slower than arithmetic).\nSince you only compare distance &lt; FLEE_RADIUS, you can instead compare dx² + dy² &lt; FLEE_RADIUS².\nThis avoids sqrt entirely and is faster in tight loops, especially with many threats per cell.',
-    improvementHint: 'Use: if 0 < (dx*dx + dy*dy) < FLEE_RADIUS_SQ: ... (precompute FLEE_RADIUS_SQ = FLEE_RADIUS * FLEE_RADIUS)'
-  },
-  {
-    id: 3,
-    title: 'Neighborhood Size Is Implicit',
-    severity: 'low',
-    snippet: 'my_cell_x: int = int(self.x // CELL_SIZE)\nmy_cell_y: int = int(self.y // CELL_SIZE)\n\nfor cx in range(my_cell_x - 1, my_cell_x + 2):\n  for cy in range(my_cell_y - 1, my_cell_y + 2):',
-    shortNote: 'Code clarity: hardcoded 3×3 search region has no named constant.',
-    fullExplanation: 'The nested loop searches cells from (my_cell_x - 1/2) with range(my_cell_x - 1, my_cell_x + 2).\nThis is a 3×3 neighborhood, but the magic offsets (-1, +2) are not named or documented.\nIf you later want to search 5×5 (wider flee radius sensing) or 1×1 (tighter), you must hunt for these numbers.\nA named constant makes intent explicit and tuning safer.',
-    improvementHint: 'Define NEIGHBORHOOD_RADIUS = 1 at the top, then use range(my_cell_x - NEIGHBORHOOD_RADIUS, my_cell_x + NEIGHBORHOOD_RADIUS + 1).'
-  },
-  {
-    id: 4,
-    title: 'Respawn Comprehension Is Hard To Read',
-    severity: 'low',
-    snippet: 'squares=[square if square.alive else Square() for square in squares]',
-    shortNote: 'Maintainability: nested ternary in list comprehension; logic is compact but unclear.',
-    fullExplanation: 'Replacing dead squares is a good practice, but packing it into a one-liner list comprehension makes it harder to read.\nWhen code is dense, future readers (or you in 6 months) must parse the logic structure from the syntax.\nExtracted functions or a loop make intent more discoverable and testable.',
-    improvementHint: 'Extract to a helper: def respawn_dead_squares(squares): return [Square() if not s.alive else s for s in squares]'
-  }
-];
+// Code review selection
+function selectReview(itemId) {
+    document.querySelectorAll('.review-item').forEach(el => el.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
 
-function escH(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const item = reviewItems.find(r => r.id === itemId);
+    if (!item) return;
+
+    let severityClass = 'severity-low';
+    if (item.severity === 'high') severityClass = 'severity-high';
+    else if (item.severity === 'medium') severityClass = 'severity-medium';
+
+    const html = `
+        <div class="review-detail-title">${item.title}</div>
+        <div class="review-detail-severity">
+            <span class="review-item-severity ${severityClass}">
+                Severity: ${item.severity.toUpperCase()}
+            </span>
+        </div>
+
+        <div class="review-detail-section">
+            <div class="review-detail-section-title">Code Snippet</div>
+            <div class="code-snippet">${item.snippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+        </div>
+
+        <div class="review-detail-section">
+            <div class="review-detail-section-title">Short Note</div>
+            <div class="review-detail-text">${item.shortNote}</div>
+        </div>
+
+        <div class="review-detail-section">
+            <div class="review-detail-section-title">Full Explanation</div>
+            <div class="review-detail-text">${item.fullExplanation}</div>
+        </div>
+
+        <div class="review-detail-section">
+            <div class="review-detail-section-title">Improvement Hint</div>
+            <div class="review-detail-text">${item.improvementHint}</div>
+        </div>
+    `;
+
+    document.getElementById('review-detail-panel').innerHTML = html;
 }
 
-function selectReview(id) {
-  document.querySelectorAll('.review-item').forEach(el => el.classList.remove('selected'));
-  document.getElementById('ri-' + id).classList.add('selected');
-  const item = reviewItems[id];
-  const sevClass = 'badge-' + item.severity;
-  const body = item.fullExplanation.replace(/\n/g, '<br>');
-  document.getElementById('review-detail-panel').innerHTML = `
-    <div>
-      <div class="detail-head">
-        <span class="detail-title">${escH(item.title)}</span>
-        <span class="badge ${escH(sevClass)}">${escH(item.severity)}</span>
-      </div>
-      <div class="detail-body">${body}</div>
-      <pre class="snippet">${escH(item.snippet)}</pre>
-      <div class="hint-box">💡 <strong>Improvement:</strong> ${escH(item.improvementHint)}</div>
-    </div>`;
-}
-
-// ── Mermaid ──
-mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
-
+// Mermaid diagram sources
 const diagrams = {
-  call_graph: String.raw`graph TD
-    n1[Program start] --> n2[Main setup]
-    n2 --> n3[Create squares]
-    n3 --> n4[Frame loop]
-    n4 --> n5[Poll events]
-    n4 --> n6[Update all]
-    n4 --> n7[Draw all]
-    n6 --> n8[Build grid]
-    n8 --> n9[Flee check]
-    n7 --> n10[Render frame]
-    n10 --> n11[FPS tick]`,
+    classes: String.raw`
+        graph TD
+            Color["fa:fa-cube Color<br/>tuple[int, int, int]"]
+            Square["Square<br/>size: int<br/>x, y: float<br/>vx, vy: float<br/>color: Color<br/>lifespan, birth_time<br/>remaining_life, alive: bool"]
+            init["Square.__init__<br/>→ random attributes"]
+            update["Square.update<br/>→ physics + steering"]
+            draw["Square.draw<br/>→ render on surface"]
+            main["main()<br/>→ pygame loop"]
+            
+            Color -->|used in| Square
+            Square --> init
+            Square --> update
+            Square --> draw
+            main --> update
+            main --> draw
+            
+            style Square fill:#00d9ff,stroke:#00ff88,stroke-width:3px,color:#0f0f1e
+            style Color fill:#ffa500,stroke:#ff6b6b,stroke-width:2px,color:#0f0f1e
+            style main fill:#00ff88,stroke:#00d9ff,stroke-width:2px,color:#0f0f1e
+    `,
 
-  grid_flow: String.raw`graph TD
-    n1[Start update] --> n2[For each square]
-    n2 --> n3[Find cell range]
-    n3 --> n4[Add to cells]
-    n4 --> n5[Grid complete]
-    n5 --> n6[Get my cells]
-    n6 --> n7[Query neighbors]
-    n7 --> n8[Check threats]
-    n8 --> n9[Flee if found]
-    n9 --> n10[Update done]`,
+    algorithm: String.raw`
+        graph TD
+            A["Start frame for Square"] --> B["Velocity Perturbation?"]
+            B -->|Yes| C["Modify vx, vy by random"]
+            B -->|No| D["Use current velocity"]
+            C --> E["Update Position"]
+            D --> E
+            E --> F["Check Window Bounds"]
+            F -->|Hit Edge| G["Bounce: invert velocity"]
+            F -->|No Hit| H["Build Spatial Grid"]
+            G --> H
+            H --> I["Query 3x3 Neighborhood"]
+            I --> J["Find Threat Closest"]
+            J --> K["Find Prey Closest"]
+            K --> L{"Threat<br/>Found?"}
+            L -->|Yes| M["Flee: normalize away"]
+            L -->|No| N{"Prey<br/>Found?"}
+            M --> O["Apply velocity"]
+            N -->|Yes| P["Chase: blend toward"]
+            N -->|No| Q["Wander: keep velocity"]
+            P --> O
+            Q --> O
+            O --> R["Update Lifespan"]
+            R --> S{"Expired?"}
+            S -->|Yes| T["Mark alive=False"]
+            S -->|No| U["End frame"]
+            T --> U
+            
+            style M fill:#ff6b6b,color:#fff
+            style P fill:#ffa500,color:#fff
+            style Q fill:#4da6ff,color:#fff
+            style O fill:#00ff88,color:#0f0f1e
+    `,
 
-  dep_graph: String.raw`graph LR
-    n1["main.py"] --> n2["random"]
-    n1 --> n3["sys"]
-    n1 --> n4["typing"]
-    n1 --> n5["pygame"]
-    n6["requirements.txt"] --> n5
-    click n2 href "https://docs.python.org/3/library/random.html" "Open"
-    click n3 href "https://docs.python.org/3/library/sys.html" "Open"
-    click n4 href "https://docs.python.org/3/library/typing.html" "Open"
-    click n5 href "https://www.pygame.org/docs/" "Open"`,
+    calls: String.raw`
+        graph TD
+            main["main<br/>pygame loop"] -->|creates| Square1["Square #1"]
+            main -->|creates| Square2["Square #2-5"]
+            main -->|each frame| update["square.update<br/>all squares"]
+            main -->|each frame| draw["square.draw<br/>all squares"]
+            update -->|calls| buildgrid["build spatial grid"]
+            update -->|calls| query["query neighbors"]
+            update -->|calls| steer["apply steering"]
+            steer -->|updates| velocity["velocity vector"]
+            velocity -->|updates| position["position x, y"]
+            draw -->|reads| position
+            draw -->|reads| size["size, color"]
+            
+            style main fill:#00ff88,color:#0f0f1e,stroke:#00d9ff,stroke-width:3px
+            style update fill:#00d9ff,color:#0f0f1e
+            style draw fill:#ffa500,color:#fff
+            style buildgrid fill:#4da6ff,color:#fff
+    `,
 
-  seq_full: String.raw`sequenceDiagram
-    participant p1 as User
-    participant p2 as Main
-    participant p3 as Pygame
-    participant p4 as Square
-    p1->>p2: Start
-    p2->>p3: Init
-    p2->>p4: Create
-    loop Frame
-      p2->>p2: Poll events
-      p2->>p4: Update
-      p2->>p3: Draw
-      p2->>p3: Tick
-    end
-    p1->>p2: Quit
-    p2->>p3: Cleanup`,
+    sequence: String.raw`
+        sequenceDiagram
+            participant pygame
+            participant main as main loop
+            participant event as event handler
+            participant squares as all squares
+            participant gfx as graphics
+            
+            pygame ->>+ main: frame tick
+            main ->>+ event: process events
+            event -->>- main: quit?
+            main ->>+ squares: update all
+            squares ->>+ squares: build grid
+            squares ->>+ squares: find threats prey
+            squares -->>- squares: steer
+            squares -->>- squares: check lifespan
+            main ->>+ squares: list alive
+            squares -->>- main: replace dead
+            main ->>+ gfx: fill screen
+            main ->>+ squares: draw all
+            squares -->>- gfx: render rects
+            gfx -->>- pygame: display
+            main ->>- pygame: tick clock
+    `,
 
-  seq_loop: String.raw`sequenceDiagram
-    participant p1 as Main
-    participant p2 as Events
-    participant p3 as Square
-    participant p4 as Display
-    p1->>p2: Get queue
-    p2-->>p1: Events
-    p1->>p3: Update all
-    p3-->>p1: Done
-    p1->>p4: Fill
-    p1->>p3: Draw all
-    p3-->>p4: Rects
-    p1->>p4: Flip`,
-
-  seq_flee: String.raw`sequenceDiagram
-    participant p1 as Main
-    participant p2 as Square
-    participant p3 as Grid
-    participant p4 as Threat
-    p1->>p2: Update call
-    p2->>p3: Build grid
-    p3-->>p2: Done
-    p2->>p3: Query cells
-    p3-->>p2: Neighbors
-    loop Each threat
-      p2->>p4: Distance check
-      p4-->>p2: OK
-      p2->>p4: Size gt?
-      p4-->>p2: True
-      p2->>p2: Flee steer
-    end`,
-
-  flow_grid: String.raw`graph TD
-    n1["Squares moving"] --> n2["Compute cell bounds"]
-    n2 --> n3["Place in cells"]
-    n3 --> n4["Grid dict built"]
-    n4 --> n5["Query my cells"]
-    n5 --> n6["Get neighbor threats"]
-    n6 --> n7["Flee logic applies"]`,
-
-  flow_velocity: String.raw`graph TD
-    n1["Size sample"] --> n2["Speed init"]
-    n2 --> n3["Random drift"]
-    n3 --> n4["Clamp"]
-    n4 --> n5["Move step"]
-    n4 --> n6["Flee steer"]
-    n6 --> n5
-    n5 --> n7["Next frame"]`,
-
-  flow_life: String.raw`graph TD
-    n1["Birth time"] --> n2["Remaining = lifespan"]
-    n2 --> n3["Each frame decrement"]
-    n3 --> n4["Check alive"]
-    n4 --> n5{Expired?}
-    n5 -->|Yes| n6["Mark dead"]
-    n5 -->|No| n7["Continue"]
-    n6 --> n8["Respawn new"]
-    n7 --> n9["Next frame"]`,
-
-  opt_control: String.raw`graph TD
-    n1[Frame start] --> n2{Quit event?}
-    n2 -->|Yes| n3[Exit loop]
-    n2 -->|No| n4{Random drift?}
-    n4 -->|Yes| n5[Change velocity]
-    n4 -->|No| n6[Keep velocity]
-    n5 --> n7{Hit wall?}
-    n6 --> n7
-    n7 -->|Yes| n8[Bounce]
-    n7 -->|No| n9{Fleet trigger?}
-    n8 --> n10[Compute flee]
-    n9 -->|Yes| n10
-    n9 -->|No| n11[Draw frame]
-    n10 --> n11`
+    dataflow: String.raw`
+        graph TD
+            pos["Position x, y<br/>Size"]
+            grid["Spatial Grid<br/>map cells to squares"]
+            neighbor["3x3 Neighborhood<br/>Query"]
+            threat["Closest Threat<br/>distance, direction"]
+            prey["Closest Prey<br/>distance, direction"]
+            decision["Behavior Decision<br/>flee vs chase vs wander"]
+            velocity["Velocity Steering<br/>normalized direction"]
+            nextpos["Next Frame Position"]
+            
+            pos --> grid
+            grid --> neighbor
+            neighbor --> threat
+            threat --> decision
+            neighbor --> prey
+            prey --> decision
+            decision --> velocity
+            velocity --> nextpos
+            
+            style pos fill:#4da6ff,color:#fff
+            style grid fill:#ffa500,color:#fff
+            style neighbor fill:#ffa500,color:#fff
+            style threat fill:#ff6b6b,color:#fff
+            style prey fill:#00ff88,color:#0f0f1e
+            style decision fill:#00d9ff,color:#0f0f1e
+            style velocity fill:#00d9ff,color:#0f0f1e
+            style nextpos fill:#4da6ff,color:#fff
+    `
 };
 
-let renderCounter = 0;
-
-async function renderDiagram(key, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  const source = diagrams[key];
-  if (!source) { container.innerHTML = '<p style="color:var(--muted)">No diagram found.</p>'; return; }
-  const uid = 'mmd-' + key + '-' + (++renderCounter);
-  try {
-    const { svg, bindFunctions } = await mermaid.render(uid, source);
-    container.innerHTML = svg;
-    if (typeof bindFunctions === 'function') bindFunctions(container);
-  } catch (err) {
-    container.innerHTML = '<pre class="fallback">Render error: ' + err.message + '\n\nSource:\n' + source + '</pre>';
-  }
-}
-
-async function renderAll() {
-  for (const [key] of Object.entries(diagrams)) {
-    await renderDiagram(key, 'diag-' + key);
-  }
-}
-
-function resolveRepoLinks() {
-  const inDocs = /\/docs\//i.test(window.location.pathname.replace(/\\/g, '/'));
-  const prefix = inDocs ? '../' : './';
-  document.querySelectorAll('[data-repo-link]').forEach((el) => {
-    const target = el.getAttribute('data-repo-link');
-    if (target) {
-      el.setAttribute('href', prefix + target);
+// Code review items
+const reviewItems = [
+    {
+        id: 1,
+        title: "Code Style: Inconsistent Spacing",
+        severity: "low",
+        snippet: "threat=None\nprey=None\nbest_threat_distance: float = float('inf')",
+        shortNote: "No spaces around '=' in variable initialization.",
+        fullExplanation: "Python PEP 8 style guide recommends spaces around assignment operators. Lines like 'threat=None' should be 'threat = None'. This is inconsistent with other assignments like 'best_threat_distance: float = float('inf')'. The inconsistency doesn't affect functionality but reduces code readability.",
+        improvementHint: "Use an auto-formatter like 'black' or 'autopep8' to standardize spacing automatically. Run 'black main.py' to fix all PEP 8 violations in one command."
+    },
+    {
+        id: 2,
+        title: "Potential Bug: Division by Zero",
+        severity: "high",
+        snippet: "flee_dir_x: float = -dx / distance\nflee_dir_y: float = -dy / distance\n...\nchase_dir_x: float = dx / distance",
+        shortNote: "If distance is exactly 0, this causes NaN propagation.",
+        fullExplanation: "If two square centers overlap (same x, y), the distance calculation yields 0. Dividing by 0 produces infinity, causing velocity to become NaN. Once NaN enters the velocity vector, it persists and breaks rendering. This rare edge case should be guarded against.",
+        improvementHint: "Add a guard before normalization: if distance < 0.01: pass (skip steering this frame). Or clamp: distance = max(distance, 0.01). Also consider: sqrt(dx*dx + dy*dy) never exceeds screen diagonal, so clamp upper bound too."
+    },
+    {
+        id: 3,
+        title: "Performance: Redundant Grid Recalculation",
+        severity: "medium",
+        snippet: "def update(self, squares: Sequence['Square']) -> None:\n    ...\n    grid: dict[tuple[int, int], list[Square]] = {}\n    for square in squares:\n        # Build grid",
+        shortNote: "Grid rebuilt inside every square's update(). Should build once per frame.",
+        fullExplanation: "Every square calls update() and builds the full spatial grid. With 5 squares, the grid is built 5 times. With 100 squares, 100 times. This is wasteful: only the main loop needs to build the grid once and pass it to all squares. Redundant dict creation and loop overhead.",
+        improvementHint: "Refactor: (1) Move grid building to main() loop, after processing all events. (2) Modify update() signature: def update(self, grid, all_squares). (3) Pass grid and all_squares to each square.update(). This reduces grid builds from O(n) to O(1) per frame."
+    },
+    {
+        id: 4,
+        title: "Performance: Redundant Distance Recalculation",
+        severity: "medium",
+        snippet: "if target.size > self.size and distance < FLEE_RADIUS and distance < best_threat_distance:\n    threat = target\n    best_threat_distance = distance\n...\nif threat is not None:\n    dx = ...\n    distance = (dx * dx + dy * dy) ** 0.5",
+        shortNote: "Distance is calculated once to find threat, then recalculated again to normalize.",
+        fullExplanation: "During neighbor lookup, distance is computed to find the best threat. Later, distance is recalculated identically. This is redundant: store it and reuse. The sqrt() operation is relatively expensive (though cached by modern CPUs).",
+        improvementHint: "Store best_threat_distance, best_threat_dx, best_threat_dy during lookup. Reuse them during steering without recalculation. Similar for prey. This saves 2-4 sqrt() operations per square per frame."
+    },
+    {
+        id: 5,
+        title: "Correctness: Potential Float Precision in Lifespan Check",
+        severity: "low",
+        snippet: "if self.remaining_life < ROUNDOFF:\n    self.alive = False",
+        shortNote: "ROUNDOFF (0.1s) handles floating-point rounding errors in time comparisons.",
+        fullExplanation: "The lifespan system uses pygame.time.get_ticks() / 1000 to get elapsed seconds. Comparing exact floats is unreliable due to rounding. The ROUNDOFF buffer (0.1 seconds) is a good safeguard, but this should be documented or made more explicit. No bug here, just good defensive design.",
+        improvementHint: "Add a comment: '# ROUNDOFF handles floating-point precision; compare with tolerance, not equality'. Consider making ROUNDOFF a class constant instead of module-level for clarity."
     }
-  });
+];
+
+// Helper function to safely render Mermaid diagram
+async function renderDiagram(diagramId, source) {
+    try {
+        const { svg } = await mermaid.render(diagramId, source);
+        return svg;
+    } catch (error) {
+        return `<div class="diag-error"><strong>Diagram Error:</strong> ${error.message}</div>`;
+    }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  selectReview(0);
-  resolveRepoLinks();
-  renderAll();
+// Initialize Mermaid
+mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    // Render all diagrams
+    for (const [key, source] of Object.entries(diagrams)) {
+        const container = document.getElementById(`diag-${key}`);
+        if (container) {
+            container.innerHTML = await renderDiagram(`mermaid-${key}`, source);
+        }
+    }
+
+    // Populate review items
+    const reviewList = document.getElementById('review-list');
+    reviewList.innerHTML = reviewItems.map(item => {
+        let severityClass = 'severity-low';
+        if (item.severity === 'high') severityClass = 'severity-high';
+        else if (item.severity === 'medium') severityClass = 'severity-medium';
+
+        return `
+            <div class="review-item ${item.id === 1 ? 'selected' : ''}" onclick="selectReview(${item.id})">
+                <div class="review-item-title">${item.title}</div>
+                <span class="review-item-severity ${severityClass}">
+                    ${item.severity.toUpperCase()}
+                </span>
+            </div>
+        `;
+    }).join('');
+
+    // Select first review item by default
+    if (reviewItems.length > 0) {
+        selectReview(reviewItems[0].id);
+    }
 });
 </script>
 </body>
