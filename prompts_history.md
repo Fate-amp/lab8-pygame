@@ -352,3 +352,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 19:25
 - **Prompt**: Okay I tried to fix it and it somehow works but it's not ideal. The bigger squares still catch up. Review my code, help me understand why and tell me how I can make it more optimal. Also, what's the complexity of my fleeing and chasing features(That part of the code specefically) and why
 
+### 23-04-2026 19:36
+- **Prompt**: i fixed the critical problem, review again. also, i don't think calculating the distance is right in the target loop, is it? I don't understand your 4th point
+
