@@ -346,3 +346,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 18:49
 - **Prompt**: what do you mean by flee and stop? break the loop on the detection of threat (or prey)? Also, should I create another loop for the detection of the prey or the threat loop is enough? Or, do I do this? :Finding a threat and a prey, then calculate the speed. But how do I separate the logic? Also, if I want to make sure that the bigger one doesn't catch up, should I clip the speed by a constant defined specifically for the predeator or the prey? How do I slow the predetaor down when it gets close?
 
+### 23-04-2026 19:15
+- **Prompt**: there is something that I haven't understood with regards to the target_list loop that is making my code not work. Is my understanding wrong? grid[(cx,xy)] as I remember it is a list of squares in that grid cell no? so I'm looping through that list, why isn't it working?
+
