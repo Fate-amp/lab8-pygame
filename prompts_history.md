@@ -349,3 +349,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 23-04-2026 19:15
 - **Prompt**: there is something that I haven't understood with regards to the target_list loop that is making my code not work. Is my understanding wrong? grid[(cx,xy)] as I remember it is a list of squares in that grid cell no? so I'm looping through that list, why isn't it working?
 
+### 23-04-2026 19:25
+- **Prompt**: Okay I tried to fix it and it somehow works but it's not ideal. The bigger squares still catch up. Review my code, help me understand why and tell me how I can make it more optimal. Also, what's the complexity of my fleeing and chasing features(That part of the code specefically) and why
+
