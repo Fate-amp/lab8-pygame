@@ -337,3 +337,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 20-04-2026 11:41
 - **Prompt**: Turn on the journal logger, turn socratic mode on. I need to implement a chasing behavior so that the bigger squares chase the smaller ones. But I don't know where to start. help me understand in clear steps
 
+### 23-04-2026 17:19
+- **Prompt**: I tried implementing the chasing feature. Review my code and in socratic mode, tell me why it feels like bigger squares are eating up the smaller ones
+
