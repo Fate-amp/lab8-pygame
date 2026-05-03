@@ -391,3 +391,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 03-05-2026 21:30
 - **Prompt**: i want you to fix the errors here without adding anything new then update the documentation and add type hints
 
+### 03-05-2026 21:37
+- **Prompt**: i tried moving to a time-based version but I'm not getting the desired effect. Help me figure out why
+
