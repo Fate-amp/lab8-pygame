@@ -397,3 +397,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 03-05-2026 21:39
 - **Prompt**: the app is not working anymore, can you explain in simple steps why this is happening
 
+### 03-05-2026 21:44
+- **Prompt**: i need the app to be time-based can you fix everything including the documentation so that it behaves as i want it to?
+
