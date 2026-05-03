@@ -385,3 +385,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 27-04-2026 14:40
 - **Prompt**: analyze this project and produce a light refactoring plan
 
+### 03-05-2026 21:28
+- **Prompt**: i tried extracting the grid and flee/chase features out of the update but I'm facing some errors can you fix that only without adding anything new?
+
