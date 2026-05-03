@@ -400,3 +400,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 03-05-2026 21:44
 - **Prompt**: i need the app to be time-based can you fix everything including the documentation so that it behaves as i want it to?
 
+### 03-05-2026 21:49
+- **Prompt**: explain to me why the squares are catching up to eachother and how i can prevent that, in theory
+
