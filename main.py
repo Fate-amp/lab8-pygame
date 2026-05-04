@@ -233,6 +233,7 @@ def find_collisions_in_grid(square,grid):
 		if neighbor is square:
 				continue
 		if square.check_collision(neighbor) and square.size>neighbor.size:
+			square.size+=neighbor.size
 			neighbor.alive=False
 
 def main() -> None:
