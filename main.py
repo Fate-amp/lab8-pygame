@@ -1,10 +1,11 @@
-"""Predator-prey simulation with spatial grid optimization.
+"""Predator-prey simulation with time-based physics and spatial grid optimization.
 
 This module implements a pygame-based animation featuring multiple colored squares
 that exhibit fleeing and chasing behaviors based on relative size. Larger squares
 chase smaller ones, while smaller squares flee from larger threats.
 
 Key features:
+- Time-based physics: all movement scaled by delta time for framerate-independent behavior.
 - Spatial grid partitioning for O(k) neighbor lookup instead of O(n²).
 - Velocity-based steering with normalized direction vectors for stable movement.
 - Size-based predator/prey relationships with configurable radii.
@@ -13,7 +14,6 @@ Key features:
 
 import random
 import sys
-from typing import Sequence
 
 import pygame
 
@@ -32,7 +32,7 @@ SQUARE_COUNT: int = 5  # Number of squares in the simulation.
 SQUARE_SIZE: int = 30  # Default square size (unused; random per-square).
 SQUARE_SIZE_MAX: int = 60  # Maximum square side length in pixels.
 SQUARE_SIZE_MIN: int = 10  # Minimum square side length in pixels.
-MAX_SPEED: float = 30  # Maximum velocity magnitude (pixels per frame).
+MAX_SPEED: float = 200  # Maximum velocity magnitude (pixels per second).
 VELOCITY_CHANGE_CHANCE: float = 0.03  # Probability per frame of random direction change.
 
 # ============================================================================
@@ -66,15 +66,15 @@ class Square:
 		- size: uniformly from [SQUARE_SIZE_MIN, SQUARE_SIZE_MAX]
 		- position: uniformly within the window bounds
 		- color: random RGB tuple
-		- initial velocity: inversely proportional to size for gameplay balance
+		- initial velocity: random direction with speed inversely proportional to size (pixels/second)
 		- lifespan: uniformly from [MIN_LIFESPAN, MAX_LIFESPAN]
 		
 		Attributes:
 			size (int): Side length of the square in pixels.
 			x (float): X-coordinate of top-left corner.
 			y (float): Y-coordinate of top-left corner.
-			vx (float): Velocity in X direction (pixels per frame).
-			vy (float): Velocity in Y direction (pixels per frame).
+			vx (float): Velocity in X direction (pixels per second).
+			vy (float): Velocity in Y direction (pixels per second).
 			color (Color): RGB tuple for rendering.
 			lifespan (int): Total lifespan in seconds.
 			birth_time (float): Timestamp when square was created (seconds since program start).
@@ -85,8 +85,11 @@ class Square:
 		self.size: int = random.randint(SQUARE_SIZE_MIN, SQUARE_SIZE_MAX)
 		self.x: float = random.randint(0, WIDTH - self.size)
 		self.y: float = random.randint(0, HEIGHT - self.size)
-		self.vx: float = MAX_SPEED / self.size
-		self.vy: float = self.vx
+		# Random direction with speed proportional to size (pixels/second).
+		angle: float = random.uniform(0, 2 * 3.14159)
+		speed: float = MAX_SPEED / self.size
+		self.vx = speed * (angle ** 0.5)
+		self.vy = speed * ((2 * 3.14159 - angle) ** 0.5)
 		self.color: Color = (
 			random.randint(50, 255),
 			random.randint(50, 255),
@@ -97,23 +100,28 @@ class Square:
 		self.remaining_life: float = float(self.lifespan)
 		self.alive: bool = True
 
-	def update(self) -> None:
-		"""Update square state for one frame: random movement, position, and aging.
+	def update(self, dt: float) -> None:
+		"""Update square state: apply random perturbation, move, handle collisions, and age.
 		
-		Performs per-frame updates independent of other squares:
+		Time-based physics update ensures consistent motion regardless of framerate:
 		1. Apply random velocity perturbation (VELOCITY_CHANGE_CHANCE probability).
-		2. Advance position based on current velocity.
-		3. Bounce off window edges (invert velocity component).
-		4. Update remaining lifespan and mark dead if expired.
+		2. Move position: new_pos = old_pos + velocity × dt (pixel-accurate).
+		3. Handle wall bounces by reversing velocity component.
+		4. Update lifespan and mark dead if expired.
 		
-		Note: Flee/chase steering is applied separately in main() using find_threat_or_prey().
+		Note: Flee/chase steering applied separately in main() via find_threat_or_prey().
+		
+		Args:
+			dt: Delta time in seconds since last frame.
 		
 		Complexity: O(1) per square update.
 		"""
 		# Sometimes slightly change direction to look more random.
 		if random.random() < VELOCITY_CHANGE_CHANCE:
-			self.vx += random.choice([-1, 0, 1]) * (self.size / SQUARE_SIZE_MAX)
-			self.vy += random.choice([-1, 0, 1]) * (self.size / SQUARE_SIZE_MAX)
+			# Add small perturbation proportional to size (smaller = more agile).
+			perturbation: float = 50 * (self.size / SQUARE_SIZE_MAX)  # pixels/second
+			self.vx += random.choice([-1, 0, 1]) * perturbation
+			self.vy += random.choice([-1, 0, 1]) * perturbation
 
 			# Keep speed inside allowed limits.
 			self.vx = max(-MAX_SPEED, min(MAX_SPEED, self.vx))
@@ -121,13 +129,13 @@ class Square:
 
 			# Avoid fully stopping a square.
 			if self.vx == 0:
-				self.vx = random.choice([-1, 1])
+				self.vx = random.choice([-50, 50])
 			if self.vy == 0:
-				self.vy = random.choice([-1, 1])
+				self.vy = random.choice([-50, 50])
 
 		# Move square based on current speed.
-		self.x += self.vx
-		self.y += self.vy
+		self.x += self.vx*dt
+		self.y += self.vy*dt
 
 		# Bounce horizontally when touching left/right edges.
 		if self.x < 0:
@@ -163,6 +171,7 @@ class Square:
 		x = self.x + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
+
 def find_threat_or_prey(
 	square: Square,
 	grid: dict[tuple[int, int], list[Square]],
@@ -210,20 +219,22 @@ def find_threat_or_prey(
 
 
 def main() -> None:
-	"""Initialize pygame and run the main game loop.
+	"""Initialize pygame and run the main game loop with time-based physics.
 	
 	Steps:
 	1. Initialize pygame and create a windowed display.
 	2. Create SQUARE_COUNT square objects with random initial states.
-	3. Main event loop:
+	3. Main event loop (time-based):
+	   - Measure delta time since last frame.
 	   - Process pygame events (quit on window close).
-	   - Update all squares' positions and behaviors.
+	   - Update all squares' positions using time-based physics (velocity × dt).
+	   - Apply flee/chase behaviors based on spatial grid neighbors.
 	   - Remove expired squares and replace with new ones.
-	   - Clear screen and render all squares.
-	   - Display and tick clock to maintain target FPS.
+	   - Render all squares.
+	   - Maintain target FPS using clock.tick().
 	4. Gracefully shut down pygame and exit.
 	
-	This loop runs until the user closes the window or presses quit.
+	Time-based physics ensures consistent motion regardless of framerate.
 	"""
 
 	# 1) Start pygame and create window objects.
@@ -238,12 +249,13 @@ def main() -> None:
 	# 3) Main loop: handle events, update state, draw frame.
 	running: bool = True
 	while running:
+		dt: float = clock.tick(FPS) / 1000.0  # Convert milliseconds to seconds.
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
 
 		for square in squares:
-			square.update()
+			square.update(dt)
 
 		squares = [square if square.alive else Square() for square in squares]
 
@@ -286,7 +298,6 @@ def main() -> None:
 			square.draw(screen)
 
 		pygame.display.flip()
-		clock.tick(FPS)
 
 	# 4) Clean shutdown.
 	pygame.quit()
