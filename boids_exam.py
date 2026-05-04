@@ -34,7 +34,7 @@ class Config:
     COHESION_STEER_STRENGTH: float = 5  # How strongly boids steer toward center of mass of neighbors (vector-based)
 
     # Wall warp or bounce
-    WALL_BEHAVIOR: str = "bounce"  # "wrap" or "bounce"
+    WALL_BEHAVIOR: str = "wrap"  # "wrap" or "bounce"
 
 
 
@@ -53,13 +53,22 @@ class Boid:
 
     # TODO: Implement speed clamping to ensure boids don't exceed max speed
     def _clampSpeed(self) -> None:
-        pass
+        self.vx=max(Config.BOID_SPEED_MIN,min(self.vx,Config.BOID_SPEED_MAX))
+        self.vy=max(Config.BOID_SPEED_MIN,min(self.vy,Config.BOID_SPEED_MAX))
 
     # TODO: Implement Screen Wrapping
     # Screen wrapping: if a boid goes off one edge of the screen, 
     # it should reappear on the opposite edge
     def _screen_wrap(self) -> None:
-        pass
+        if self.x<0:
+            self.x=Config.WIDTH-Config.BOID_SIZE
+        elif self.x>Config.WIDTH-Config.BOID_SIZE:
+            self.x=0
+
+        if self.y<0:
+            self.y=Config.HEIGHT-Config.BOID_SIZE
+        elif self.y>Config.HEIGHT-Config.BOID_SIZE:
+            self.y=0
     
     # Default wall behavior is bounce: if a boid hits the edge of the screen, 
     # it should bounce back in the opposite direction
