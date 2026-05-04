@@ -175,6 +175,8 @@ class Square:
 		x = self.x + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
+	def check_collision(self, other:Square) -> bool:
+		return self.collideRect(other)
 
 def find_threat_or_prey(
 	square: Square,
