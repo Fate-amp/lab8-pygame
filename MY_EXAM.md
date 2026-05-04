@@ -14,3 +14,6 @@ First impression: I should add the size of the smaller square to the bigger one 
 First impression was to somehow control the draw so that the trail can be seen instead of the screen clearing after every frame
 I drew the line and the length is 30 but it is not the past trajectory
 
+**Exercise 8:**
+First impression: I have to somehow use delta time and the after and before position with regards to dt to get the current speed
+Idea: set a square attribute with the initial position before dt and compare dx/dt and dy/dt to the actual vx and vy 

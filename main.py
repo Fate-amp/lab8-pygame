@@ -57,6 +57,7 @@ CHASE_STRENGTH: float = 0.2  # Blending factor (0.0-1.0) controlling predator st
 
 
 TRAILS_LENGTH = 30
+TEST_MODE_ON : bool = True
 
 class Square:
 	"""Represents one moving square in the predator-prey simulation.
@@ -106,6 +107,10 @@ class Square:
 		self.birth_time: float = pygame.time.get_ticks() / 1000
 		self.remaining_life: float = float(self.lifespan)
 		self.alive: bool = True
+		self.test_initial_x=self.x
+		self.test_initial_y=self.y
+		test_vx=None
+		test_vy=None
 
 	def update(self, dt: float) -> None:
 		"""Update square state: apply random perturbation, move, handle collisions, and age.
@@ -281,9 +286,17 @@ def main() -> None:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
-
+			
 		for square in squares:
 			square.update(dt)
+		
+		if TEST_MODE_ON:
+			for square in squares:
+				dx=square.x-square.test_initial_x
+				square.test_vx=dx/dt
+				dy=square.y-square.test_initial_y
+				square.test_vy=dy/dt
+			print(all(square.vx==square.test_vx and square.vy==square.test_vy))
 
 		# Build grid for neighbor lookup
 		grid: dict[tuple[int, int], list[Square]] = {}
