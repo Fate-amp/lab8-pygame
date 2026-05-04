@@ -20,3 +20,6 @@ Idea: set a square attribute with the initial position before dt and compare dx/
 
 **Exercise 9:**
 First impression: The square should grow over a period of 500ms. Meaning instead of adding to the square size, it should be dt*growth/growth_speed because if it grew 5 units in one frame, now it should grow over a period of 500ms not over the dt
+
+**Exercise 11:**
+First impresssion was to add to self.angle by the "spread" argument but that didn't work as there exists no self.angle!
