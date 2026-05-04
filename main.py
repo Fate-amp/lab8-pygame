@@ -28,8 +28,12 @@ FPS: int = 60  # Target frames per second.
 # ============================================================================
 # SQUARE SIMULATION SETTINGS
 # ============================================================================
-SQUARE_COUNT: int = 5  # Number of squares in the simulation.
-SQUARE_SIZE: int = 30  # Default square size (unused; random per-square).
+BIG_SQUARE_COUNT:int=5
+MEDIUM_SQUARE_COUNT:int=10
+SMALL_SQUARE_COUNT:int=30
+BIG_SQUARE_SIZE:int=25
+MEDIUM_SQUARE_SIZE:int=10
+SMALL_SQUARE_SIZE:int=4
 SQUARE_SIZE_MAX: int = 60  # Maximum square side length in pixels.
 SQUARE_SIZE_MIN: int = 10  # Minimum square side length in pixels.
 MAX_SPEED: float = 200  # Maximum velocity magnitude (pixels per second).
@@ -59,7 +63,7 @@ class Square:
 	Larger squares chase smaller ones; smaller squares flee from larger ones.
 	"""
 
-	def __init__(self) -> None:
+	def __init__(self,size) -> None:
 		"""Initialize a new square with random attributes.
 		
 		Randomly assigns:
@@ -82,7 +86,7 @@ class Square:
 			alive (bool): Whether square is still active in simulation.
 		"""
 		# Start at a random position with a random speed and color.
-		self.size: int = random.randint(SQUARE_SIZE_MIN, SQUARE_SIZE_MAX)
+		self.size: int = size
 		self.x: float = random.randint(0, WIDTH - self.size)
 		self.y: float = random.randint(0, HEIGHT - self.size)
 		# Random direction with speed proportional to size (pixels/second).
@@ -244,7 +248,13 @@ def main() -> None:
 	clock = pygame.time.Clock()
 
 	# 2) Create initial squares.
-	squares: list[Square] = [Square() for _ in range(SQUARE_COUNT)]
+	squares: list[Square] = []
+	for _ in range(BIG_SQUARE_COUNT):
+		squares.append(Square(BIG_SQUARE_SIZE))
+	for _ in range(MEDIUM_SQUARE_COUNT):
+		squares.append(Square(MEDIUM_SQUARE_SIZE))
+	for _ in range(SMALL_SQUARE_COUNT):
+		squares.append(Square(SMALL_SQUARE_SIZE))
 
 	# 3) Main loop: handle events, update state, draw frame.
 	running: bool = True
@@ -256,9 +266,26 @@ def main() -> None:
 
 		for square in squares:
 			square.update(dt)
-
-		squares = [square if square.alive else Square() for square in squares]
-
+		dead_squares_big=0
+		dead_squares_medium=0
+		dead_squares_small=0
+		if not square.alive and square.size==BIG_SQUARE_SIZE:
+			dead_squares_big+=1
+		if not square.alive and square.size==MEDIUM_SQUARE_SIZE:
+			dead_squares_medium+=1
+		if not square.alive and square.size==SMALL_SQUARE_SIZE:
+			dead_squares_small+=1
+		survivors=[]
+		for square in squares:
+			if square.alive:
+				survivors.append(square)
+		for _ in range(dead_squares_big):
+			survivors.append(Square(BIG_SQUARE_SIZE))
+		for _ in range(dead_squares_medium):
+			survivors.append(Square(MEDIUM_SQUARE_SIZE))
+		for _ in range(dead_squares_small):
+			survivors.append(Square(SMALL_SQUARE_SIZE))
+		squares=survivors
 		# Build grid for neighbor lookup
 		grid: dict[tuple[int, int], list[Square]] = {}
 		for square in squares:
