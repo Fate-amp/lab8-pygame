@@ -9,3 +9,8 @@ Bug2:The collision does not kill.
 
 **Exercise 6:**
 First impression: I should add the size of the smaller square to the bigger one when they collide
+
+**Exercise 7:**
+First impression was to somehow control the draw so that the trail can be seen instead of the screen clearing after every frame
+I drew the line and the length is 30 but it is not the past trajectory
+

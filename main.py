@@ -55,6 +55,9 @@ FLEE_RADIUS: float = 50  # Distance (pixels) at which smaller squares detect and
 CHASE_RADIUS: float = 80  # Distance (pixels) at which larger squares detect and chase smaller prey.
 CHASE_STRENGTH: float = 0.2  # Blending factor (0.0-1.0) controlling predator steering intensity; higher = more aggressive steering.
 
+
+TRAILS_LENGTH = 30
+
 class Square:
 	"""Represents one moving square in the predator-prey simulation.
 	
@@ -175,6 +178,7 @@ class Square:
 		x = self.x + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
+		pygame.draw.line(surface,self.color,start_pos=(self.x,self.y),end_pos=(self.x-TRAILS_LENGTH,self.y-TRAILS_LENGTH))
 	def check_collision(self, other:Square) -> bool:
 		rect1=pygame.Rect(self.x,self.y,self.size,self.size)
 		rect2=pygame.Rect(other.x,other.y,other.size,other.size)
