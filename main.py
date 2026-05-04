@@ -141,21 +141,21 @@ class Square:
 		self.x += self.vx*dt
 		self.y += self.vy*dt
 
-		# Bounce horizontally when touching left/right edges.
+		# Wrap horizontally when touching left/right edges.
 		if self.x < 0:
-			self.x = 0
-			self.vx *= -1
-		elif self.x + self.size > WIDTH:
 			self.x = WIDTH - self.size
-			self.vx *= -1
+			self.x=max(0,min(self.x,WIDTH-self.size))
+		elif self.x + self.size > WIDTH:
+			self.x = 0
+			self.x=max(0,min(self.x,WIDTH-self.size))
 
-		# Bounce vertically when touching top/bottom edges.
+		# Wrap vertically when touching top/bottom edges.
 		if self.y < 0:
-			self.y = 0
-			self.vy *= -1
-		elif self.y + self.size > HEIGHT:
 			self.y = HEIGHT - self.size
-			self.vy *= -1
+			self.y=max(0,min(self.y,HEIGHT-self.size))
+		elif self.y + self.size > HEIGHT:
+			self.y=0
+			self.y=max(0,min(self.y,HEIGHT-self.size))
 
 		# To update the remaining_life
 		current_time: float = pygame.time.get_ticks() / 1000
