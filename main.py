@@ -176,7 +176,9 @@ class Square:
 		y = self.y + (random.choice([1, -1]) * (self.size / SQUARE_SIZE_MAX * 1))
 		pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
 	def check_collision(self, other:Square) -> bool:
-		return self.collideRect(other)
+		rect1=pygame.Rect(self.x,self.y,self.size,self.size)
+		rect2=pygame.Rect(other.x,other.y,other.size,other.size)
+		return rect1.colliderect(rect2)
 
 def find_threat_or_prey(
 	square: Square,
@@ -223,6 +225,15 @@ def find_threat_or_prey(
 						closest_prey_dist = dist
 	return closest_threat, closest_prey
 
+def find_collisions_in_grid(square,grid):
+	cell_x: int = int(square.x // CELL_SIZE)
+	cell_y: int = int(square.y // CELL_SIZE)
+	neighbor_cell: tuple[int, int] = (cell_x, cell_y)
+	for neighbor in grid.get(neighbor_cell, []):
+		if neighbor is square:
+				continue
+		if square.check_collision(neighbor) and square.size>neighbor.size:
+			neighbor.alive=False
 
 def main() -> None:
 	"""Initialize pygame and run the main game loop with time-based physics.
@@ -268,26 +279,7 @@ def main() -> None:
 
 		for square in squares:
 			square.update(dt)
-		dead_squares_big=0
-		dead_squares_medium=0
-		dead_squares_small=0
-		if not square.alive and square.size==BIG_SQUARE_SIZE:
-			dead_squares_big+=1
-		if not square.alive and square.size==MEDIUM_SQUARE_SIZE:
-			dead_squares_medium+=1
-		if not square.alive and square.size==SMALL_SQUARE_SIZE:
-			dead_squares_small+=1
-		survivors=[]
-		for square in squares:
-			if square.alive:
-				survivors.append(square)
-		for _ in range(dead_squares_big):
-			survivors.append(Square(BIG_SQUARE_SIZE))
-		for _ in range(dead_squares_medium):
-			survivors.append(Square(MEDIUM_SQUARE_SIZE))
-		for _ in range(dead_squares_small):
-			survivors.append(Square(SMALL_SQUARE_SIZE))
-		squares=survivors
+
 		# Build grid for neighbor lookup
 		grid: dict[tuple[int, int], list[Square]] = {}
 		for square in squares:
@@ -321,7 +313,28 @@ def main() -> None:
 				dist = (dx ** 2 + dy ** 2) ** 0.5 or 1
 				square.vx = (dx / dist) * speed
 				square.vy = (dy / dist) * speed
-
+		find_collisions_in_grid(square,grid)
+		# To update the squares list based on the size
+		dead_squares_big=0
+		dead_squares_medium=0
+		dead_squares_small=0
+		if not square.alive and square.size==BIG_SQUARE_SIZE:
+			dead_squares_big+=1
+		if not square.alive and square.size==MEDIUM_SQUARE_SIZE:
+			dead_squares_medium+=1
+		if not square.alive and square.size==SMALL_SQUARE_SIZE:
+			dead_squares_small+=1
+		survivors=[]
+		for square in squares:
+			if square.alive:
+				survivors.append(square)
+		for _ in range(dead_squares_big):
+			survivors.append(Square(BIG_SQUARE_SIZE))
+		for _ in range(dead_squares_medium):
+			survivors.append(Square(MEDIUM_SQUARE_SIZE))
+		for _ in range(dead_squares_small):
+			survivors.append(Square(SMALL_SQUARE_SIZE))
+		squares=survivors
 		screen.fill((18, 18, 24))
 		for square in squares:
 			square.draw(screen)
