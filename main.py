@@ -58,7 +58,7 @@ CHASE_STRENGTH: float = 0.2  # Blending factor (0.0-1.0) controlling predator st
 
 TRAILS_LENGTH = 30
 TEST_MODE_ON : bool = True
-
+GROWTH_SPEED:int=500 #unit:ms
 class Square:
 	"""Represents one moving square in the predator-prey simulation.
 	
@@ -234,7 +234,7 @@ def find_threat_or_prey(
 						closest_prey_dist = dist
 	return closest_threat, closest_prey
 
-def find_collisions_in_grid(square,grid):
+def find_collisions_in_grid(square,grid,dt):
 	cell_x: int = int(square.x // CELL_SIZE)
 	cell_y: int = int(square.y // CELL_SIZE)
 	neighbor_cell: tuple[int, int] = (cell_x, cell_y)
@@ -242,7 +242,7 @@ def find_collisions_in_grid(square,grid):
 		if neighbor is square:
 				continue
 		if square.check_collision(neighbor) and square.size>neighbor.size:
-			square.size+=neighbor.size
+			square.size+=(neighbor.size*dt)/GROWTH_SPEED
 			neighbor.alive=False
 
 def main() -> None:
@@ -331,7 +331,7 @@ def main() -> None:
 				dist = (dx ** 2 + dy ** 2) ** 0.5 or 1
 				square.vx = (dx / dist) * speed
 				square.vy = (dy / dist) * speed
-		find_collisions_in_grid(square,grid)
+		find_collisions_in_grid(square,grid,dt)
 		# To update the squares list based on the size
 		dead_squares_big=0
 		dead_squares_medium=0

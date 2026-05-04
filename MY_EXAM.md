@@ -16,4 +16,7 @@ I drew the line and the length is 30 but it is not the past trajectory
 
 **Exercise 8:**
 First impression: I have to somehow use delta time and the after and before position with regards to dt to get the current speed
-Idea: set a square attribute with the initial position before dt and compare dx/dt and dy/dt to the actual vx and vy 
+Idea: set a square attribute with the initial position before dt and compare dx/dt and dy/dt to the actual vx and vy
+
+**Exercise 9:**
+First impression: The square should grow over a period of 500ms. Meaning instead of adding to the square size, it should be dt*growth/growth_speed because if it grew 5 units in one frame, now it should grow over a period of 500ms not over the dt
