@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predator-Prey Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #1a1a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ccc;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        canvas {
+            border: 2px solid #444;
+            display: block;
+            background-color: #121218;
+            cursor: default;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #2a2a2a;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #3a3a3a;
+        }
+
+        button:active {
+            background-color: #1a1a1a;
+        }
+
+        .stats {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .stat-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Predator-Prey Simulation (JavaScript Port)</h1>
+        <canvas id="canvas"></canvas>
+        <div class="controls">
+            <button id="pauseBtn">Pause</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        <div class="stats">
+            <div class="stat-item">FPS: <span id="fps">0</span></div>
+            <div class="stat-item">Squares: <span id="squareCount">0</span></div>
+            <div class="stat-item">Time: <span id="time">0.0s</span></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // CONFIGURATION CONSTANTS
+        // ============================================================================
+        // Equivalent to Python's global configuration variables
+        const CONFIG = {
+            WIDTH: 800,
+            HEIGHT: 600,
+            FPS: 60,
+
+            // Square counts and sizes
+            BIG_SQUARE_COUNT: 5,
+            MEDIUM_SQUARE_COUNT: 10,
+            SMALL_SQUARE_COUNT: 30,
+            BIG_SQUARE_SIZE: 25,
+            MEDIUM_SQUARE_SIZE: 10,
+            SMALL_SQUARE_SIZE: 4,
+            SQUARE_SIZE_MAX: 60,
+            SQUARE_SIZE_MIN: 10,
+            MAX_SPEED: 200,
+            VELOCITY_CHANGE_CHANCE: 0.03,
+
+            // Lifespan and behavior
+            MIN_LIFESPAN: 5,
+            MAX_LIFESPAN: 20,
+            ROUNDOFF: 0.1,
+
+            // Grid and steering
+            CELL_SIZE: 100,
+            FLEE_RADIUS: 50,
+            CHASE_RADIUS: 80,
+            CHASE_STRENGTH: 0.2,
+
+            // Visual effects
+            TRAILS_LENGTH: 30,
+            TEST_MODE_ON: true,
+            GROWTH_SPEED: 500, // milliseconds
+
+            // Canvas background color (RGB)
+            BG_COLOR: { r: 18, g: 18, b: 24 }
+        };
+
+        // ============================================================================
+        // SQUARE CLASS
+        // ============================================================================
+        /**
+         * Represents one moving square in the predator-prey simulation.
+         * Equivalent to Python's Square class.
+         */
+        class Square {
+            /**
+             * Initialize a new square with random attributes.
+             * Equivalent to Python: def __init__(self, size)
+             */
+            constructor(size) {
+                this.size = size;
+                this.x = Math.random() * (CONFIG.WIDTH - this.size);
+                this.y = Math.random() * (CONFIG.HEIGHT - this.size);
+
+                // Random direction with speed inversely proportional to size
+                const angle = Math.random() * 2 * Math.PI;
+                const speed = CONFIG.MAX_SPEED / this.size;
+                this.vx = speed * Math.sqrt(angle);
+                this.vy = speed * Math.sqrt(2 * Math.PI - angle);
+
+                // Random RGB color
+                this.color = {
+                    r: Math.floor(Math.random() * 206) + 50, // 50-255
+                    g: Math.floor(Math.random() * 206) + 50,
+                    b: Math.floor(Math.random() * 206) + 50
+                };
+
+                // Lifespan tracking
+                this.lifespan = Math.floor(Math.random() * (CONFIG.MAX_LIFESPAN - CONFIG.MIN_LIFESPAN + 1)) + CONFIG.MIN_LIFESPAN;
+                this.birthTime = performance.now() / 1000; // Current time in seconds
+                this.remainingLife = parseFloat(this.lifespan);
+                this.alive = true;
+
+                // Test mode variables
+                this.testInitialX = this.x;
+                this.testInitialY = this.y;
+                this.testVx = null;
+                this.testVy = null;
+            }
+
+            /**
+             * Update square state: apply random perturbation, move, handle collisions, and age.
+             * Equivalent to Python: def update(self, dt)
+             * 
+             * Time-based physics ensures consistent motion regardless of framerate.
+             */
+            update(dt) {
+                // Step 1: Random velocity perturbation (VELOCITY_CHANGE_CHANCE probability)
+                if (Math.random() < CONFIG.VELOCITY_CHANGE_CHANCE) {
+                    const perturbation = 50 * (this.size / CONFIG.SQUARE_SIZE_MAX);
+                    const choices = [-1, 0, 1];
+                    this.vx += choices[Math.floor(Math.random() * 3)] * perturbation;
+                    this.vy += choices[Math.floor(Math.random() * 3)] * perturbation;
+
+                    // Clamp speed to MAX_SPEED
+                    this.vx = Math.max(-CONFIG.MAX_SPEED, Math.min(CONFIG.MAX_SPEED, this.vx));
+                    this.vy = Math.max(-CONFIG.MAX_SPEED, Math.min(CONFIG.MAX_SPEED, this.vy));
+
+                    // Avoid fully stopping a square
+                    if (this.vx === 0) {
+                        this.vx = Math.random() < 0.5 ? -50 : 50;
+                    }
+                    if (this.vy === 0) {
+                        this.vy = Math.random() < 0.5 ? -50 : 50;
+                    }
+                }
+
+                // Step 2: Move position based on velocity × dt (time-based physics)
+                this.x += this.vx * dt;
+                this.y += this.vy * dt;
+
+                // Step 3: Handle screen wrapping (wrap, not bounce)
+                if (this.x < 0) {
+                    this.x = CONFIG.WIDTH - this.size;
+                    this.x = Math.max(0, Math.min(this.x, CONFIG.WIDTH - this.size));
+                } else if (this.x + this.size > CONFIG.WIDTH) {
+                    this.x = 0;
+                    this.x = Math.max(0, Math.min(this.x, CONFIG.WIDTH - this.size));
+                }
+
+                if (this.y < 0) {
+                    this.y = CONFIG.HEIGHT - this.size;
+                    this.y = Math.max(0, Math.min(this.y, CONFIG.HEIGHT - this.size));
+                } else if (this.y + this.size > CONFIG.HEIGHT) {
+                    this.y = 0;
+                    this.y = Math.max(0, Math.min(this.y, CONFIG.HEIGHT - this.size));
+                }
+
+                // Step 4: Update lifespan and mark dead if expired
+                const currentTime = performance.now() / 1000;
+                this.remainingLife = this.lifespan - (currentTime - this.birthTime);
+                if (this.remainingLife < CONFIG.ROUNDOFF) {
+                    this.alive = false;
+                }
+            }
+
+            /**
+             * Render the square to the canvas with visual jitter.
+             * Equivalent to Python: def draw(self, surface)
+             * Adds random pixel offsets (±1 scaled by size) for hand-drawn appearance.
+             */
+            draw(ctx) {
+                const jitterX = Math.random() < 0.5 ? -1 : 1;
+                const jitterY = Math.random() < 0.5 ? -1 : 1;
+                const x = this.x + (jitterX * (this.size / CONFIG.SQUARE_SIZE_MAX) * 1);
+                const y = this.y + (jitterY * (this.size / CONFIG.SQUARE_SIZE_MAX) * 1);
+
+                // Set fill color using RGB
+                // Equivalent to: pygame.draw.rect(surface, self.color, (x, y, self.size, self.size))
+                ctx.fillStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+                ctx.fillRect(x, y, this.size, this.size);
+
+                // Draw trail line from square to offset position
+                // Equivalent to: pygame.draw.line(surface, self.color, (self.x, self.y), (...))
+                ctx.strokeStyle = `rgb(${this.color.r}, ${this.color.g}, ${this.color.b})`;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - CONFIG.TRAILS_LENGTH, this.y - CONFIG.TRAILS_LENGTH);
+                ctx.stroke();
+            }
+
+            /**
+             * Check collision with another square using axis-aligned bounding box.
+             * Equivalent to Python: def check_collision(self, other)
+             */
+            checkCollision(other) {
+                return !(this.x + this.size < other.x ||
+                         this.x > other.x + other.size ||
+                         this.y + this.size < other.y ||
+                         this.y > other.y + other.size);
+            }
+        }
+
+        // ============================================================================
+        // UTILITY FUNCTIONS
+        // ============================================================================
+
+        /**
+         * Build spatial grid for efficient neighbor lookup.
+         * Equivalent to Python grid-building code in main()
+         * Returns: dict[tuple[int, int], list[Square]] → Map<string, Array<Square>>
+         */
+        function buildGrid(squares) {
+            const grid = {};
+
+            for (const square of squares) {
+                const cellXMin = Math.floor(square.x / CONFIG.CELL_SIZE);
+                const cellXMax = Math.floor((square.x + square.size) / CONFIG.CELL_SIZE);
+                const cellYMin = Math.floor(square.y / CONFIG.CELL_SIZE);
+                const cellYMax = Math.floor((square.y + square.size) / CONFIG.CELL_SIZE);
+
+                for (let cx = cellXMin; cx <= cellXMax; cx++) {
+                    for (let cy = cellYMin; cy <= cellYMax; cy++) {
+                        const cellKey = `${cx},${cy}`;
+                        if (!grid[cellKey]) {
+                            grid[cellKey] = [];
+                        }
+                        grid[cellKey].push(square);
+                    }
+                }
+            }
+
+            return grid;
+        }
+
+        /**
+         * Find the closest threat (larger square) and prey (smaller square) using spatial grid.
+         * Equivalent to Python: def find_threat_or_prey(square, grid)
+         * Returns: [closest_threat, closest_prey]
+         */
+        function findThreatOrPrey(square, grid) {
+            let closestThreat = null;
+            let closestThreatDist = Infinity;
+            let closestPrey = null;
+            let closestPreyDist = Infinity;
+
+            const cellX = Math.floor(square.x / CONFIG.CELL_SIZE);
+            const cellY = Math.floor(square.y / CONFIG.CELL_SIZE);
+
+            // Check 3×3 neighborhood of grid cells
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    const neighborCell = `${cellX + dx},${cellY + dy}`;
+                    const neighbors = grid[neighborCell] || [];
+
+                    for (const neighbor of neighbors) {
+                        if (neighbor === square) continue;
+
+                        // Calculate Euclidean distance between centers
+                        const dxDist = square.x - neighbor.x;
+                        const dyDist = square.y - neighbor.y;
+                        const dist = Math.sqrt(dxDist * dxDist + dyDist * dyDist);
+
+                        // Track threat: larger neighbor within FLEE_RADIUS
+                        if (neighbor.size > square.size && dist < CONFIG.FLEE_RADIUS) {
+                            if (dist < closestThreatDist) {
+                                closestThreat = neighbor;
+                                closestThreatDist = dist;
+                            }
+                        }
+                        // Track prey: smaller neighbor within CHASE_RADIUS
+                        else if (neighbor.size < square.size && dist < CONFIG.CHASE_RADIUS) {
+                            if (dist < closestPreyDist) {
+                                closestPrey = neighbor;
+                                closestPreyDist = dist;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return [closestThreat, closestPrey];
+        }
+
+        /**
+         * Check collisions in a specific grid cell and apply growth if larger square hits smaller.
+         * Equivalent to Python: def find_collisions_in_grid(square, grid, dt)
+         */
+        function findCollisionsInGrid(square, grid, dt) {
+            const cellX = Math.floor(square.x / CONFIG.CELL_SIZE);
+            const cellY = Math.floor(square.y / CONFIG.CELL_SIZE);
+            const neighborCell = `${cellX},${cellY}`;
+            const neighbors = grid[neighborCell] || [];
+
+            for (const neighbor of neighbors) {
+                if (neighbor === square) continue;
+
+                // Check collision and apply growth if square is larger
+                if (square.checkCollision(neighbor) && square.size > neighbor.size) {
+                    square.size += (neighbor.size * dt) / CONFIG.GROWTH_SPEED;
+                    neighbor.alive = false;
+                }
+            }
+        }
+
+        /**
+         * Update squares list: remove dead squares and spawn new ones to maintain population.
+         * Equivalent to Python: dead square counting and replacement in main()
+         */
+        function updateSquaresList(squares) {
+            let deadBig = 0, deadMedium = 0, deadSmall = 0;
+
+            for (const square of squares) {
+                if (!square.alive) {
+                    if (square.size === CONFIG.BIG_SQUARE_SIZE) deadBig++;
+                    else if (square.size === CONFIG.MEDIUM_SQUARE_SIZE) deadMedium++;
+                    else if (square.size === CONFIG.SMALL_SQUARE_SIZE) deadSmall++;
+                }
+            }
+
+            // Filter out dead squares
+            const survivors = squares.filter(s => s.alive);
+
+            // Add replacements to maintain initial population
+            for (let i = 0; i < deadBig; i++) {
+                survivors.push(new Square(CONFIG.BIG_SQUARE_SIZE));
+            }
+            for (let i = 0; i < deadMedium; i++) {
+                survivors.push(new Square(CONFIG.MEDIUM_SQUARE_SIZE));
+            }
+            for (let i = 0; i < deadSmall; i++) {
+                survivors.push(new Square(CONFIG.SMALL_SQUARE_SIZE));
+            }
+
+            // Update squares array in-place
+            squares.length = 0;
+            squares.push(...survivors);
+        }
+
+        /**
+         * Render frame: clear canvas and draw all squares.
+         * Equivalent to Python: screen.fill(BG_COLOR) + pygame.display.flip()
+         */
+        function renderFrame(ctx, squares) {
+            // Clear canvas with background color
+            ctx.fillStyle = `rgb(${CONFIG.BG_COLOR.r}, ${CONFIG.BG_COLOR.g}, ${CONFIG.BG_COLOR.b})`;
+            ctx.fillRect(0, 0, CONFIG.WIDTH, CONFIG.HEIGHT);
+
+            // Draw all squares
+            for (const square of squares) {
+                square.draw(ctx);
+            }
+        }
+
+        /**
+         * Calculate delta time (dt) in seconds since last frame.
+         * Equivalent to Python: dt = clock.tick(FPS) / 1000.0
+         */
+        function calculateDt() {
+            const currentTime = performance.now() / 1000;
+            const dt = currentTime - gameState.lastFrameTime;
+            gameState.lastFrameTime = currentTime;
+
+            // Cap dt to avoid large jumps if tab loses focus
+            return Math.min(dt, 1 / CONFIG.FPS * 2);
+        }
+
+        // ============================================================================
+        // GAME STATE & INITIALIZATION
+        // ============================================================================
+
+        const gameState = {
+            squares: [],
+            running: true,
+            lastFrameTime: performance.now() / 1000,
+            elapsedTime: 0,
+            frameCount: 0,
+            fps: 0,
+            lastFpsTime: performance.now() / 1000
+        };
+
+        // Canvas setup (equivalent to pygame.init() and pygame.display.set_mode())
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = CONFIG.WIDTH;
+        canvas.height = CONFIG.HEIGHT;
+
+        /**
+         * Initialize the simulation with squares.
+         * Equivalent to Python: creating initial squares in main()
+         */
+        function initializeSquares() {
+            gameState.squares = [];
+
+            // Create big squares
+            for (let i = 0; i < CONFIG.BIG_SQUARE_COUNT; i++) {
+                gameState.squares.push(new Square(CONFIG.BIG_SQUARE_SIZE));
+            }
+
+            // Create medium squares
+            for (let i = 0; i < CONFIG.MEDIUM_SQUARE_COUNT; i++) {
+                gameState.squares.push(new Square(CONFIG.MEDIUM_SQUARE_SIZE));
+            }
+
+            // Create small squares
+            for (let i = 0; i < CONFIG.SMALL_SQUARE_COUNT; i++) {
+                gameState.squares.push(new Square(CONFIG.SMALL_SQUARE_SIZE));
+            }
+        }
+
+        // ============================================================================
+        // MAIN SIMULATION LOOP
+        // ============================================================================
+
+        /**
+         * Main game loop using requestAnimationFrame.
+         * Equivalent to Python: while running loop in main()
+         */
+        function gameLoop() {
+            if (!gameState.running) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+
+            // Calculate delta time (equivalent to pygame: dt = clock.tick(FPS) / 1000.0)
+            const dt = calculateDt();
+            gameState.elapsedTime += dt;
+            gameState.frameCount++;
+
+            // Update FPS counter
+            const currentTime = performance.now() / 1000;
+            if (currentTime - gameState.lastFpsTime >= 1.0) {
+                gameState.fps = gameState.frameCount;
+                gameState.frameCount = 0;
+                gameState.lastFpsTime = currentTime;
+            }
+
+            // Step 1: Update all squares with time-based physics
+            for (const square of gameState.squares) {
+                square.update(dt);
+            }
+
+            // Step 2: Build spatial grid for neighbor lookup
+            const grid = buildGrid(gameState.squares);
+
+            // Step 3: Apply flee/chase behaviors based on grid neighbors
+            for (const square of gameState.squares) {
+                const [threat, prey] = findThreatOrPrey(square, grid);
+                const speed = Math.sqrt(square.vx ** 2 + square.vy ** 2) || 1;
+
+                if (threat) {
+                    // Flee: move away from threat
+                    const dx = square.x - threat.x;
+                    const dy = square.y - threat.y;
+                    const dist = Math.sqrt(dx ** 2 + dy ** 2) || 1;
+                    square.vx = (dx / dist) * speed;
+                    square.vy = (dy / dist) * speed;
+                } else if (prey) {
+                    // Chase: move toward prey
+                    const dx = prey.x - square.x;
+                    const dy = prey.y - square.y;
+                    const dist = Math.sqrt(dx ** 2 + dy ** 2) || 1;
+                    square.vx = (dx / dist) * speed;
+                    square.vy = (dy / dist) * speed;
+                }
+            }
+
+            // Step 4: Check collisions and apply growth
+            for (const square of gameState.squares) {
+                findCollisionsInGrid(square, grid, dt);
+            }
+
+            // Step 5: Handle dead squares and replacements
+            updateSquaresList(gameState.squares);
+
+            // Step 6: Render frame (equivalent to pygame.display.flip())
+            renderFrame(ctx, gameState.squares);
+
+            // Update UI stats
+            document.getElementById('fps').textContent = gameState.fps;
+            document.getElementById('squareCount').textContent = gameState.squares.length;
+            document.getElementById('time').textContent = gameState.elapsedTime.toFixed(1) + 's';
+
+            // Continue loop (equivalent to pygame event loop continuation)
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ============================================================================
+        // UI CONTROLS
+        // ============================================================================
+
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            gameState.running = !gameState.running;
+            const btn = document.getElementById('pauseBtn');
+            btn.textContent = gameState.running ? 'Pause' : 'Resume';
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            gameState.running = true;
+            gameState.elapsedTime = 0;
+            gameState.frameCount = 0;
+            gameState.lastFrameTime = performance.now() / 1000;
+            document.getElementById('pauseBtn').textContent = 'Pause';
+            initializeSquares();
+        });
+
+        // ============================================================================
+        // START SIMULATION
+        // ============================================================================
+
+        // Initialize squares and start the game loop
+        initializeSquares();
+        gameLoop();
+    </script>
+</body>
+</html>
