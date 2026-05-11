@@ -430,3 +430,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 11-05-2026 18:39
 - **Prompt**: should i be calculating speed, then clamp it then redistribute based on angle?
 
+### 11-05-2026 18:43
+- **Prompt**: check now
+
