@@ -412,3 +412,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 08-05-2026 18:17
 - **Prompt**: is the screen wrapping behavior working as expected?
 
+### 11-05-2026 18:32
+- **Prompt**: I am well aware that my code is not working but i need you to make me understand why so that I can fix it, starting from the very core issues, one issue at a time I'm not looking for solutions. imagine you're a senior developer and a tutor trying to help me understand
+
