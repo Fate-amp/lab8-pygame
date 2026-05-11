@@ -436,3 +436,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 11-05-2026 18:46
 - **Prompt**: i don't know, get the number of rotations and that number*2pi?
 
+### 11-05-2026 18:48
+- **Prompt**: so now it's correct?
+
