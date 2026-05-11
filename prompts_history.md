@@ -424,3 +424,6 @@ Mermaid diagrams, performance analysis of the new grid-based flee logic, type hi
 ### 11-05-2026 18:36
 - **Prompt**: check again
 
+### 11-05-2026 18:37
+- **Prompt**: i think it's away?
+
